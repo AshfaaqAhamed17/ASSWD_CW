@@ -1,0 +1,137 @@
+.auth-cont{
+    height: 100vh;
+}
+
+.login_img{
+    height: 450px;
+    border-radius: 10px;
+}
+
+.form_sec{
+    border-radius: 30px 0 0 30px;
+    background-color: #F3F3F3;
+}
+
+.logo_img{
+    text-align: center;
+    height: 100px;
+    border-radius: 100px;
+}
+
+.login_name{
+    font-size: 30px;
+}
+
+.no_acc_signup{
+    color: green;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.landing_img{
+    height: 90vh;
+    width: 100%;
+    filter: blur(5px);
+    opacity: 0.3;
+    padding: 0;
+}
+
+.landing_img_txt {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .landing_card_txt{
+    background-color: #F3F3F3;
+    /* max-height: 19vh; */
+    overflow-y: auto;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* number of lines to show */
+    -webkit-box-orient: vertical;
+  }
+
+  /* width */
+.landing_card_txt::-webkit-scrollbar {
+    width: 5px;
+  }
+  /* Handle */
+  .landing_card_txt::-webkit-scrollbar-thumb {
+    background:rgb(0, 0, 0);
+    border-radius: 5px 0 0 5px;
+    /* box-shadow: inset 5px -5px 5px rgba(58, 114, 60, 1); */
+  }
+
+  .left_post_sec{
+    background-color: #e0e2ff;
+  }
+
+  .right_card_sec{
+    background-color: #b6b6b6;
+  }
+
+  .explore_usercover_img{
+    background-image: url("https://as2.ftcdn.net/v2/jpg/02/88/31/61/1000_F_288316108_qEHo10DffYyauk9fQhOv1XcDfC7r7C8o.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 200px;
+  }
+
+
+  
+  #actions {
+    margin: 2em 0;
+  }
+  
+  
+  /* Mimic table appearance */
+  div.table {
+    display: table;
+  }
+  div.table .file-row {
+    display: table-row;
+  }
+  div.table .file-row > div {
+    display: table-cell;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+    padding: 8px;
+  }
+  div.table .file-row:nth-child(odd) {
+    background: #f9f9f9;
+  }
+  
+  
+  
+  /* The total progress gets shown by event listeners */
+  #total-progress {
+    opacity: 0;
+    transition: opacity 0.3s linear;
+  }
+  
+  /* Hide the progress bar when finished */
+  #previews .file-row.dz-success .progress {
+    opacity: 0;
+    transition: opacity 0.3s linear;
+  }
+  
+  /* Hide the delete button initially */
+  #previews .file-row .delete {
+    display: none;
+  }
+  
+  /* Hide the start and cancel buttons and show the delete button */
+  
+  #previews .file-row.dz-success .start,
+  #previews .file-row.dz-success .cancel {
+    display: none;
+  }
+  #previews .file-row.dz-success .delete {
+    display: block;
+  }
+  
+  
+    
