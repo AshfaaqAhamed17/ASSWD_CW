@@ -1,20 +1,23 @@
 <?php $this->load->view('templates/header'); ?>
 <?php $this->load->view('templates/navbar'); ?>
 
-<div class="container-fluid py-3 explore" id="explore">
+<div class="container-fluid py-3 ">
+    <div class="helo">
+
+    </div>
     <div class="row">
         <div class="col-9">
             <form class="d-flex">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-primary" id="searchBtn">Search</button>
             </form>
-            <div class="card mt-3 px-3 py-1 shadow-lg border-0">
 
+            <div class="card mt-3 px-3 py-1 shadow-lg border-0" id="explore">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
                         <img src="./../assets/images/user.png" class="post_card_userimg">
                         <div class="ms-4 mt-2">
-                            <h5 class="mb-0">Username</h5>
+                            <h5 class="mb-0" id="post_username"></h5>
                             <p>Today</p>
                         </div>
                     </div>
@@ -23,7 +26,7 @@
                     </button>
                 </div>
 
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col-4">
                         <img src="./../assets/images/login.webp" class="img-fluid">
                         <div class="d-flex mt-2 justify-content-between">
@@ -70,7 +73,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -121,73 +124,67 @@
 </div>
 
 <script>
-    // var PostView = Backbone.View.extend({
-    //     events: {
-    //         "click #searchBtn": "onClick"
-    //     },
-    //     onClick: function() {
-    //         console.log("Hello World abc 123");
-    //     },
-    // });
-
-    // var postView = new PostView({
-    //     el: $("#explore")
-    // });
-
     var PostModel = Backbone.Model.extend({
-        <?php $userID = ""; ?>
         urlRoot: "<?php echo base_url() ?>api/Post/",
-        // urlRoot: "<?php echo base_url() ?>api/Post/" + <?php echo $userID ?>,
         defaults: {
             "caption": "",
             "createdTime": "",
-            "image": "",
+            "image": "123",
             "location": "",
             "postID": null,
-            "userID": null
+            "userID": 1
         },
         initialize: function() {
             console.log("Post Model Initialized");
         }
     });
 
-    var post = new PostModel();
-    post.fetch();
-    post.fetch({
-        success: function() {
-            console.log("Current existing posts ", post.attributes.data);
-            // view.$el.html(view.template(post.toJSON()));
+    // var post = new PostModel();
+    // post.fetch({
+    //     success: function() {
+    //         console.log("Current existing posts ", post.attributes.data);
+    //     }
+    // });
+
+    var PostCollection = Backbone.Collection.extend({
+        model: PostModel,
+        url: "<?php echo base_url() ?>api/Post/",
+        initialize: function() {
+            console.log("Post Collection Initialized");
         }
+    });
+
+    var allPosts = new PostCollection();
+    allPosts.fetch({
+        async: false
     });
 
     var PostView = Backbone.View.extend({
-        el: $("#explore"),
+        el: "#explore",
         initialize: function() {
-            this.model = new postModel();
-            this.listenTo(this.model, 'sync', this.render);
-        },
-        template: _.template($('#view_list').html()),
-        events: {
-            "click #list": "list"
+            this.render();
+            console.log("Post View Initialized");
         },
         render: function() {
-            this.$el.html(this.template(this.model.toJSON()));
-        },
+            console.log("TEST 1", this.model.attributes.data);
+            allPosts.each(function(post) {
+                var postID = post.get("postID");
+                var caption = post.get("caption");
+                var image = post.get("image");
+                var userID = post.get("userID");
 
-        list: function(e) {
-            this.model.fetch({
-                success: function(post) {
-                    console.log(post.toJSON().length);
-                    this.$el.html(this.template(post.toJSON()));
-                }
+                console.log("TEST 2", postID, caption, image, userID);
+
+                $('#post_username').append(`
+                    <h5 class="mb-0 post_username">"${userID}"</h5>
+                    <p>Today</p>
+                `);
             });
-        }
 
-
+        },
     });
 
-
-    var postView = new PostView({});
+    var postView = new PostView();
 </script>
 
 <?php

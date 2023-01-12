@@ -25,12 +25,13 @@ class PostModel extends CI_Model
         return $query->result();
     }
 
-    public function insertPost($post, $caption, $userID)
+    public function insertPost($post, $caption, $userID, $location)
     {
         $data = array(
             'image' => $post,
             'caption' => $caption,
-            'userID' => $userID
+            'userID' => $userID,
+            'location' => $location
         );
         $this->db->insert('post', $data);
         return $this->db->insert_id();

@@ -33,8 +33,14 @@
         </div>
     </div>
 
-    <div class="container text-center mt-5">
-        <div class="row row-cols-md-3 g-3">
+    <div class="container text-center mt-5" id="all_user_posts">
+        <div class="row row-cols-md-4 g-3" id="post_imgs">
+            <div class="col">
+                <div class="card shadow-lg">
+                    <img src="./../assets/images/logo.png" class="card-img-top ">
+                </div>
+            </div>
+
             <div class="col">
                 <div class="card shadow-lg">
                     <img src="./../assets/images/logo.png" class="card-img-top ">
@@ -63,5 +69,68 @@
     </div>
 </div>
 <div class="mt-5"></div>
+
+<script>
+    var ProfilePostModel = Backbone.Model.extend({
+        urlRoot: "<?php echo base_url() ?>api/Post",
+        defaults: {
+            caption: "",
+            createdTime: "",
+            image: "",
+            location: "",
+            postID: null,
+            userID: 1
+        },
+        initialize: function() {
+            console.log("Profile Post Model Initialized", this.attributes.data);
+        }
+    });
+
+    var ProfilePostCollection = Backbone.Collection.extend({
+        model: ProfilePostModel,
+        url: "<?php echo base_url() ?>api/Post",
+        // initialize: function() {
+        //     console.log("Profile Post Collection Initialized 123");
+        // }
+    });
+
+    var allUserPosts = new ProfilePostCollection();
+    allUserPosts.fetch({
+        success: function() {
+            console.log("Profile Post Collection Fetched", allUserPosts);
+        },
+        async: false
+    });
+
+    var ProfilePostView = Backbone.View.extend({
+        el: "#post_imgs",
+        initialize: function() {
+            this.render();
+            console.log("Profile Post View Initialized");
+        },
+        render: function() {
+            allUserPosts.each(function(post) {
+                var postID = post.get("postID");
+                var caption = post.get("caption");
+                var image = post.get("image");
+                // var image = "./../assets/images/logo.png";
+                var userID = post.get("userID");
+                console.log("Post ID: ", post.get("image"));
+                $("#post_imgs").append(`
+                <div class="col">
+                    <div class="card shadow-lg">
+                        <img src="${image}" 
+                            class="card-img-top 
+                            id="${postID}
+                            alt="no image"">
+                    </div>
+                </div>
+                `);
+            });
+        }
+    });
+
+    var profilePostView = new ProfilePostView();
+</script>
 
 <?php $this->load->view('templates/footer'); ?>
