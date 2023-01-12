@@ -26,7 +26,7 @@
                     </button>
                 </div>
 
-                <!-- <div class="row">
+                <div class="row">
                     <div class="col-4">
                         <img src="./../assets/images/login.webp" class="img-fluid">
                         <div class="d-flex mt-2 justify-content-between">
@@ -73,7 +73,7 @@
                             </div>
                         </div>
                     </div>
-                </div> -->
+                </div>
             </div>
         </div>
 
@@ -122,70 +122,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    var PostModel = Backbone.Model.extend({
-        urlRoot: "<?php echo base_url() ?>api/Post/",
-        defaults: {
-            "caption": "",
-            "createdTime": "",
-            "image": "123",
-            "location": "",
-            "postID": null,
-            "userID": 1
-        },
-        initialize: function() {
-            console.log("Post Model Initialized");
-        }
-    });
-
-    // var post = new PostModel();
-    // post.fetch({
-    //     success: function() {
-    //         console.log("Current existing posts ", post.attributes.data);
-    //     }
-    // });
-
-    var PostCollection = Backbone.Collection.extend({
-        model: PostModel,
-        url: "<?php echo base_url() ?>api/Post/",
-        initialize: function() {
-            console.log("Post Collection Initialized");
-        }
-    });
-
-    var allPosts = new PostCollection();
-    allPosts.fetch({
-        async: false
-    });
-
-    var PostView = Backbone.View.extend({
-        el: "#explore",
-        initialize: function() {
-            this.render();
-            console.log("Post View Initialized");
-        },
-        render: function() {
-            console.log("TEST 1", this.model.attributes.data);
-            allPosts.each(function(post) {
-                var postID = post.get("postID");
-                var caption = post.get("caption");
-                var image = post.get("image");
-                var userID = post.get("userID");
-
-                console.log("TEST 2", postID, caption, image, userID);
-
-                $('#post_username').append(`
-                    <h5 class="mb-0 post_username">"${userID}"</h5>
-                    <p>Today</p>
-                `);
-            });
-
-        },
-    });
-
-    var postView = new PostView();
-</script>
 
 <?php
 $this->load->view('templates/footer');

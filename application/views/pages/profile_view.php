@@ -15,7 +15,7 @@
             <p class="text-start m-0">DESCRIPTION - Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
             <div class="d-flex">
                 <a class="btn btn-primary  mx-0"><i class="fa fa-pencil me-2" aria-hidden="true"></i>Edit Profile</a>
-                <a class="btn btn-outline-danger ms-2"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
+                <a href="login" class="btn btn-outline-danger ms-2"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
             </div>
         </div>
         <div class="col-5 ">
@@ -33,46 +33,18 @@
         </div>
     </div>
 
+    <!-- POST IMAGES ARE DISPLAYED -->
     <div class="container text-center mt-5" id="all_user_posts">
         <div class="row row-cols-md-4 g-3" id="post_imgs">
-            <div class="col">
-                <div class="card shadow-lg">
-                    <img src="./../assets/images/logo.png" class="card-img-top ">
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="card shadow-lg">
-                    <img src="./../assets/images/logo.png" class="card-img-top ">
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="card shadow-lg">
-                    <img src="./../assets/images/logo.png" class="card-img-top ">
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="card shadow-lg">
-                    <img src="./../assets/images/logo.png" class="card-img-top ">
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="card shadow-lg">
-                    <img src="./../assets/images/logo.png" class="card-img-top ">
-                </div>
-            </div>
-
         </div>
     </div>
 </div>
 <div class="mt-5"></div>
 
 <script>
+
     var ProfilePostModel = Backbone.Model.extend({
-        urlRoot: "<?php echo base_url() ?>api/Post",
+        url: "<?php echo base_url() ?>api/Post/12",
         defaults: {
             caption: "",
             createdTime: "",
@@ -88,18 +60,12 @@
 
     var ProfilePostCollection = Backbone.Collection.extend({
         model: ProfilePostModel,
-        url: "<?php echo base_url() ?>api/Post",
-        // initialize: function() {
-        //     console.log("Profile Post Collection Initialized 123");
-        // }
+        url: "<?php echo base_url() ?>api/Post/12",
     });
 
     var allUserPosts = new ProfilePostCollection();
-    allUserPosts.fetch({
-        success: function() {
-            console.log("Profile Post Collection Fetched", allUserPosts);
-        },
-        async: false
+    allUserPosts.fetch({async: false}).done(() => {
+        console.log("Profile Post Collection Fetched", allUserPosts);
     });
 
     var ProfilePostView = Backbone.View.extend({
@@ -109,24 +75,33 @@
             console.log("Profile Post View Initialized");
         },
         render: function() {
-            allUserPosts.each(function(post) {
-                var postID = post.get("postID");
-                var caption = post.get("caption");
-                var image = post.get("image");
-                // var image = "./../assets/images/logo.png";
-                var userID = post.get("userID");
-                console.log("Post ID: ", post.get("image"));
-                $("#post_imgs").append(`
-                <div class="col">
-                    <div class="card shadow-lg">
-                        <img src="${image}" 
-                            class="card-img-top 
-                            id="${postID}
-                            alt="no image"">
+            var posts = allUserPosts['models'][0]['attributes']['data'];
+            console.log("Post: ", posts);
+            
+            for (var i = 0; i < posts.length; i++) {
+                var post = posts[i];
+                var postImg = post['image'];
+                var postCaption = post['caption'];
+                var postLocation = post['location'];
+                var postCreatedTime = post['createdTime'];
+                var postID = post['postID'];
+                var userID = post['userID'];
+                
+                var postCard = `
+                    <div class="col">
+                        <div class="card shadow-lg">
+                            <img src="http://localhost/codeigniter-cw/uploads/${postImg}" class="card-img-top ">
+                            <div class="card-body">
+                                <p class="card-text">${postCaption}</p>
+                                <p class="card-text"><small class="text-muted">${postLocation}</small></p>
+                                <p class="card-text"><small class="text-muted">${postCreatedTime}</small></p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                `);
-            });
+                `;
+
+                this.$el.append(postCard);
+            }
         }
     });
 

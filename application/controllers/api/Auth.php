@@ -49,7 +49,9 @@ class Auth extends REST_Controller
                     "iat" => $iat, //Time the JWT issued at
                     "exp" => $exp, // Expiration time of token
                     "username" => $login->userName,
-                    "email" => $login->email
+                    "email" => $login->email,
+                    "userID" => $login->userID
+
                 );
                 $token = $jwt->encode($payload, $key, 'HS256');
                 // echo json_encode(array(
@@ -65,7 +67,7 @@ class Auth extends REST_Controller
                 $this->response([
                     'status' => FALSE,
                     'message' => 'Invalid username or password'
-                ], REST_Controller::HTTP_NOT_FOUND);
+                ], REST_Controller::HTTP_UNAUTHORIZED);
             }
         }
     }

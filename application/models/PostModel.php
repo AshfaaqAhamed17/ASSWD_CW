@@ -11,7 +11,7 @@ class PostModel extends CI_Model
     {
         $this->db->select('*');
         $this->db->from('post');
-        $this->db->where('postID ', $id);
+        $this->db->where('userID ', $id);
         // to get users posts --> $this->db->where('userID', $id);
         $query = $this->db->get();
         return $query->result();
@@ -43,13 +43,13 @@ class PostModel extends CI_Model
             'post' => $post,
             'caption' => $caption
         );
-        $this->db->where('id', $id);
+        $this->db->where('postID', $id);
         $this->db->update('post', $data);
     }
 
     public function deletePost($id)
     {
-        $this->db->where('id', $id);
+        $this->db->where('postID', $id);
         $this->db->delete('post');
         return $this->db->affected_rows();
     }
