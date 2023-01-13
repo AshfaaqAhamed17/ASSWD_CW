@@ -36,11 +36,13 @@ class Auth extends REST_Controller
             }
         } else {
             $login = $this->AuthModel->loginUser($username, $password);
+            // var_dump($login);
             if ($login) {
+                // console.log(" LINE 40 ", $login);
                 $jwt = new JWT();
                 $key = getenv('JWT_SECRET');
                 $iat = time(); // current timestamp value
-                $exp = $iat + 3600;
+                $exp = $iat + 10;
 
                 $payload = array(
                     "iss" => "Issuer of the JWT",
@@ -51,17 +53,18 @@ class Auth extends REST_Controller
                     "username" => $login->userName,
                     "email" => $login->email,
                     "userID" => $login->userID
-
                 );
+
                 $token = $jwt->encode($payload, $key, 'HS256');
-                // echo json_encode(array(
-                //     "message" => "Successful login.",
-                //     "jwt" => $token
-                // ));
+                // $decoded = $jwt->decode($token, $key, 'HS256');
+                                
                 $this->response([
                     'status' => TRUE,
                     'message' => 'User logged in successfully',
-                    "jwt" => $token
+                    "token" => $token,
+                    "userID" => $login->userID,
+                    "username" => $login->userName,
+                    "userDescription" => $login->userDescription
                 ], REST_Controller::HTTP_OK);
             } else {
                 $this->response([

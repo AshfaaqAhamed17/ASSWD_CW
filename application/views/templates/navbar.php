@@ -1,7 +1,7 @@
 
 <nav class="navbar navbar-dark sticky-top" style="background-color: black;">
     <div class="container-fluid align-middle">
-        <a class="navbar-brand">Navbar</a>
+        <a class="navbar-brand">SnackBar</a>
         <form class="d-flex">
             <!-- <i class="fa fa-user fs-2 mx-2 my-auto" style="color: white" aria-hidden="true"></i> -->
 

@@ -115,7 +115,7 @@ class Post extends REST_Controller
             $this->response([
                 'status' => FALSE,
                 'message' => 'No posts yet!'
-            ], REST_Controller::HTTP_NOT_FOUND);
+            ], REST_Controller::HTTP_NO_CONTENT);
         }
     }
 

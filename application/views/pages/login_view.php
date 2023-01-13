@@ -54,7 +54,6 @@
             password: ''
         }
     });
-    
     var LoginView = Backbone.View.extend({
         el: '.form_sec',
         events: {
@@ -89,12 +88,19 @@
                     data: this.model.toJSON(),
                     
                 }).done(function(response) {
-                    console.log(" LINE 83 ", response);
+                    console.log(" LINE 92 ", response);
+                                  
+                    localStorage.setItem('token', response.token);
+                    localStorage.setItem('username', response.username);
+                    localStorage.setItem('userID', response.userID);
+                    localStorage.setItem('lmessageogged-in', true);
+                    localStorage.setItem('userDescription', response.userDescription);
+                    
                     alert('User Logged In Successfully');
                     window.location.href = '<?php echo base_url() ?>Profile';
                 }).fail(function(response) {
-                    console.log(" LINE 87 ", response.responseJSON.message);
-                    alert(response.responseJSON.message);
+                    console.log(" LINE 87 ", response.responseJSON);
+                    alert(response.responseJSON);
                 });
             }
         }
