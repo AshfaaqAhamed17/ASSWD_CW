@@ -15,9 +15,15 @@ class CommentModel extends CI_Model
 
     public function getComment($id)
     {
-        $this->db->select('*');
-        $this->db->from('comment');
+        // $this->db->select('*');
+        // $this->db->from('comment');
+        // $this->db->where('postID', $id);
+
+        $this->db->select('userName, comment.*');
+        $this->db->from('user_detail');
         $this->db->where('postID', $id);
+        $this->db->join('comment', 'user_detail.userID = comment.userID');
+
         $query = $this->db->get();
         return $query->result();
     }

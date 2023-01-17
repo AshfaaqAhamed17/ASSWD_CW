@@ -41,12 +41,14 @@ class Comment extends REST_Controller
             if ($comments) {
                 $this->response([
                     'status' => TRUE,
+                    'message' => 'Comments found!',
                     'data' => $comments
                 ], REST_Controller::HTTP_OK);
             } else {
                 $this->response([
-                    'status' => TRUE,
-                    'message' => 'No comments yet!'
+                    'status' => FALSE,
+                    'message' => 'No comments yet!',
+                    'data' => [$comments]
                 ], REST_Controller::HTTP_OK);
             }
         }
