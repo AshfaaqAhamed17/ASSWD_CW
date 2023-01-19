@@ -3,7 +3,6 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 require APPPATH . '/libraries/REST_Controller.php';
-require APPPATH . '/libraries/ImplementJWT.php';
 
 use \Restserver\Libraries\REST_Controller;
 
@@ -17,7 +16,7 @@ class Auth extends REST_Controller
     }
 
     // Register User & Login User
-    public function index_post()
+    public function login_post()
     {
         $username = $this->post('userName');
         $email = $this->post('email');
@@ -36,13 +35,11 @@ class Auth extends REST_Controller
             }
         } else {
             $login = $this->AuthModel->loginUser($username, $password);
-            // var_dump($login);
             if ($login) {
-                // console.log(" LINE 40 ", $login);
                 $jwt = new JWT();
                 $key = getenv('JWT_SECRET');
                 $iat = time(); // current timestamp value
-                $exp = $iat + 10;
+                $exp = $iat + 3600;
 
                 $payload = array(
                     "iss" => "Issuer of the JWT",
@@ -57,14 +54,19 @@ class Auth extends REST_Controller
 
                 $token = $jwt->encode($payload, $key, 'HS256');
                 // $decoded = $jwt->decode($token, $key, 'HS256');
-                                
+                
+                
                 $this->response([
                     'status' => TRUE,
                     'message' => 'User logged in successfully',
                     "token" => $token,
                     "userID" => $login->userID,
                     "username" => $login->userName,
-                    "userDescription" => $login->userDescription
+                    "userDescription" => $login->userDescription,
+                    "userAddress" => $login->userAddress,
+                    "userTelNo" => $login->userTelNo,
+                    "userFirstName" => $login->userFirstName,
+                    "userLastName" => $login->userLastName                
                 ], REST_Controller::HTTP_OK);
             } else {
                 $this->response([
@@ -73,5 +75,26 @@ class Auth extends REST_Controller
                 ], REST_Controller::HTTP_UNAUTHORIZED);
             }
         }
+    }
+
+    // update user profile
+    public function updateProfile_post()
+    {
+        $userID = $this->post('userID');
+        $username = $this->post('userName');
+        $fName = $this->post('fName') ? $this->post('fName') : NULL;
+        $lName = $this->post('lName') ? $this->post('lName') : NULL;
+        $telNum = $this->post('telNum') ? $this->post('telNum') : NULL;
+        $uAddress = $this->post('uAddress') ? $this->post('uAddress') : NULL;
+        $uDesc = $this->post('uDesc') ? $this->post('uDesc') : NULL;
+        // $profileImg = $this->post('profileImg');
+
+        $response = $this->AuthModel->updateProfile($userID, $username, $fName, $lName, $telNum, $uAddress, $uDesc);
+        // var_dump($response);
+        $this->response([
+            'data' => $response,
+            'status' => TRUE,
+            'message' => 'User profile updated successfully'
+        ], REST_Controller::HTTP_OK);
     }
 }

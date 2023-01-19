@@ -41,4 +41,20 @@ class AuthModel extends CI_Model
             }
         }
     }
+
+    //update user profile
+    public function updateProfile($userID, $username, $ufname, $ulname, $utelnum, $uaddress, $udesc)
+    {
+        $data = array(
+            'userFirstName' => $ufname,
+            'userLastName' => $ulname,
+            'userTelNo' => $utelnum,
+            'userAddress' => $uaddress,
+            'userDescription' => $udesc,
+        );
+        $this->db->where('userID', $userID);
+        $this->db->update('user_detail', $data);
+        // return $this->db->affected_rows();
+        return $data;
+    }
 }

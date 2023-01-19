@@ -67,36 +67,6 @@ class Post extends REST_Controller
         }
     }
 
-    // // upload post image
-    // public function upload_post()
-    // {
-    //     $config['upload_path'] = './uploads/';
-    //     $config['allowed_types'] = 'gif|jpg|png';
-    //     $config['encrypt_name'] = TRUE;
-
-    //     // $config['max_size'] = 10000;
-    //     $config['maintain_ratio'] = TRUE;
-    //     $config['max_width'] = 10240;
-    //     $config['max_height'] = 10240;
-
-    //     $this->load->library('upload', $config);
-
-    //     if (!$this->upload->do_upload('image')) {
-    //         $error = array('error' => $this->upload->display_errors());
-    //         $this->response([
-    //             'status' => FALSE,
-    //             'message' => $error
-    //         ], REST_Controller::HTTP_BAD_REQUEST);
-    //     } else {
-    //         $data = array('upload_data' => $this->upload->data());
-    //         $this->response([
-    //             'status' => TRUE,
-    //             'message' => 'Image uploaded successfully',
-    //             'data' => $data
-    //         ], REST_Controller::HTTP_CREATED);
-    //     }
-    // }
-
     public function index_get()
     {
         $id = $this->uri->segment(3);

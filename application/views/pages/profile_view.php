@@ -11,12 +11,6 @@
             </div>
         </div>
         <div class="col-5" id="uname_desc">
-            <!-- <p class="text-start fs-4 fw-bold m-0" id="profile_uname"></p> -->
-            <!-- <p class="text-start m-0">DESCRIPTION - Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p> -->
-            <!-- <div class="d-flex">
-                <button class="btn btn-primary  mx-0"><i class="fa fa-pencil me-2" aria-hidden="true"></i>Edit Profile</button>
-                <button class="btn btn-outline-danger ms-2" id="logout"><i class="fa fa-sign-out"></i></button>
-            </div> -->
         </div>
         <div class="col-5 ">
             <div class="row d-flex align-items-center justify-content-center" id="profile_stats" style="height: 100%;">
@@ -76,35 +70,8 @@
                         <h5 id="post_cap"></h5>
                         <div>#123 #123 Lorem ipsum.</div>
                         <div class="bg-light mt-4 px-4 py-1 landing_card_txt" id="comSec" style="height: 400px;">
-                            <!-- <div class="d-flex align-items-start my-3" >
-                                <img src="./../assets/images/user.png" class="post_card_comment_userimg">
-                                <div class="ms-3 w-100" >          
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h6>TEST unam</h6>
-                                        <h6>TEST time</h6>
-                                    </div>
-                                    <p id="pCap"></p>
-                                </div>
-                            </div> -->
-
                             <div class="d-flex align-items-start my-3" id="comSec">
-                                <!-- <img src="./../assets/images/user.png" class="post_card_comment_userimg">
-                                <div class="ms-3 w-100" >
-                                    
-                                </div> -->
                             </div>
-                            <!-- <div class="d-flex align-items-start my-3">
-                                <img src="./../assets/images/user.png" class="post_card_comment_userimg">
-                                <div class="ms-3 w-100">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h6>Username</h6>
-                                        <h6>Today</h6>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                </div>
-                            </div> -->
                         </div>
                         <div>
                         <form class="d-flex mt-3">
@@ -122,6 +89,49 @@
     </div>
 </div>
 
+<!-- modal popup view to edit profile -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <!-- <div class="mb-3">
+                        <label for="uname" class="col-form-label">Username:</label>
+                        <input type="text" class="form-control" id="uname">
+                    </div> -->
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="ufname" placeholder="First Name">
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="ulname" placeholder="Last Name">
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" id="udesc" placeholder="Description"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="uaddress" placeholder="Address">
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="utelnum" placeholder="Telephone No">
+                    </div>
+                    <div class="mb-3">
+                        <label for="profile_img" class="col-form-label">Profile Image:</label>
+                        <input type="file" class="form-control" id="profile_img">
+                    </div>
+                </form> 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="updateProfile">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 
     //block user from routing to other pages
@@ -134,9 +144,71 @@
 
     var user_id = localStorage.getItem("userID");
     var user_name = localStorage.getItem("username");
-    var userDescription = localStorage.getItem("userDescription") ? localStorage.getItem("userDescription") : "My bio...";
+    var userDescription = localStorage.getItem("userDescription") !== 'null' ? localStorage.getItem("userDescription") : "My Bio...";
+    var userAddress = localStorage.getItem("userAddress") !== 'null' ? localStorage.getItem("userAddress") : "";
+    var userTelNo = localStorage.getItem("userTelNo") !== 'null' ? localStorage.getItem("userTelNo") : 0000000000;
+    var userFirstName = localStorage.getItem("userFirstName") !== 'null' ? localStorage.getItem("userFirstName") : "";
+    var userLastName = localStorage.getItem("userLastName") !== 'null' ? localStorage.getItem("userLastName") : "";
    
-    console.log("local -- ",user_id, user_name);
+    console.log("local -- ",user_id, " | ", user_name, " | ", userDescription);
+
+    // open modal popup to edit profile
+    $(document).on('click', '#edit_btn', function() {
+        $('#editProfileModal').modal('show');
+        $('#uname').val(user_name);
+        $('#ufname').val(userFirstName);
+        $('#ulname').val(userLastName);
+        $('#utelnum').val(userTelNo);
+        $('#uaddress').val(userAddress);
+        $('#udesc').val(userDescription);
+    });
+
+    // update profile to the database
+    $(document).on('click', '#updateProfile', function() {
+        var uname = $('#uname').val();
+        var ufname = $('#ufname').val();
+        var ulname = $('#ulname').val();
+        var utelnum = $('#utelnum').val();
+        var uaddress = $('#uaddress').val();
+        var udesc = $('#udesc').val();
+        // var profile_img = $('#profile_img').val();
+
+        $.ajax({
+            url: '<?php echo base_url() ?>api/Auth/updateProfile',
+            type: 'POST',
+            data: {
+                'userID': user_id,
+                'userName': uname,
+                'fName': ufname,
+                'lName': ulname,
+                'telNum': utelnum,
+                'uAddress': uaddress,
+                'uDesc': udesc,
+                // 'profileImg': profile_img
+            },
+        }).done(function(data) {
+            if(data.status = true){
+                console.log(data);
+                console.log("data Desc-- ",data.data.userDescription);
+                alert("Profile updated successfully");
+                localStorage.setItem('userDescription', data.data.userDescription);
+                localStorage.setItem('userAddress', data.data.userAddress);
+                localStorage.setItem('userTelNo', data.data.userTelNo);
+                localStorage.setItem('userFirstName', data.data.userFirstName);
+                localStorage.setItem('userLastName', data.data.userLastName);
+
+                // close the modal popup
+                $('#editProfileModal').modal('hide');
+                // reload the page to update the profile details  
+                window.location.reload();
+
+                // window.location.href = '<?php echo base_url() ?>Profile';
+            }else{
+                alert("Profile update failed");
+            }
+        });
+    });
+
 
     $(document).on('click', '.postid_img', function() {
         var img_src = $(this).attr('src');
@@ -226,35 +298,10 @@
     });
 
     var allUserPosts = new ProfilePostCollection();
-    allUserPosts.fetch({async: false}).done(() => {
-        console.log("Profile Post Collection Fetched", allUserPosts['models'][0]['attributes']['data']);
-    });
-
-    var CommentModel = Backbone.Model.extend({
-        url: "<?php echo base_url() ?>api/Comment/" + 8,
-        defaults: {
-            commentID: null,
-            comment: "",
-            createdTime: "",
-            postID: null,
-            userID: null
-        },
-        initialize: function(post_id) {
-            console.log("Comment Model Initialized", this.attributes.data);
-            console.log("Comment Model Initialized", this.post_id);
-        }
-    });
-
-    var CommentCollection = Backbone.Collection.extend({
-        model: CommentModel,
-        url: "<?php echo base_url() ?>api/Comment/" + 8,
-    });
-
-    var allComments = new CommentCollection();
-    allComments.fetch({async: false}).done(() => {
-        console.log("Comment Collection Fetched", allComments['models'][0]['attributes']['data']);
-    });
-
+    allUserPosts.fetch({async: false})
+    // .done(() => {
+    //     console.log("Profile Post Collection Fetched", allUserPosts['models'][0]['attributes']['data']);
+    // });
 
     var ProfilePostView = Backbone.View.extend({
         el: "#profile_div",
@@ -270,7 +317,7 @@
                     <p class='text-start fs-4 fw-bold m-0'>${user_name}</p>
                     <p class="text-start m-0">${userDescription}</p>
                     <div class="d-flex">
-                        <button class="btn btn-primary  mx-0"><i class="fa fa-pencil me-2" aria-hidden="true"></i>Edit Profile</button>
+                        <button class="btn btn-primary  mx-0" id="edit_btn"><i class="fa fa-pencil me-2" aria-hidden="true"></i>Edit Profile</button>
                         <button class="btn btn-outline-danger ms-2" id="logout"><i class="fa fa-sign-out"></i></button>
                     </div>
                     `
@@ -279,9 +326,6 @@
                 var posts = allUserPosts['models'][0]['attributes']['data'];
                 console.log("Post: ", posts);
                 console.log("105 -- Posts: ", posts.length);
-
-                var comments = allComments['models'][0]['attributes']['data'];
-                console.log("Comment: ", comments);
 
                 for (var i = 0; i < posts.length; i++) {
                     var post = posts[i];

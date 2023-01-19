@@ -986,7 +986,8 @@ abstract class REST_Controller extends \CI_Controller {
                 $method = $this->input->server('HTTP_X_HTTP_METHOD_OVERRIDE');
             }
 
-            $method = strtolower($method);
+            $method = ($method);
+            // $method = strtolower($method);
         }
 
         if (empty($method))

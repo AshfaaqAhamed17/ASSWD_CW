@@ -16,7 +16,7 @@
                     <input type="text" class="form-control" id="inputUserName" placeholder="Enter Username" aria-describedby="emailHelp">
                 </div>
                 <div class="mb-3">
-                    <input type="text" class="form-control" id="inputUserName" placeholder="Enter Email" aria-describedby="emailHelp">
+                    <input type="text" class="form-control" id="inputEmail" placeholder="Enter Email" aria-describedby="emailHelp">
                 </div>
                 <div class="mb-3 input-group" id="show_hide_password">
                     <input type="password" class="form-control" id="inputPassword" placeholder="Password">
@@ -138,7 +138,3 @@
     var signupView = new SignupView();
     
 </script>
-
-<?php
-// $this->load->view('templates/footer');
-?>

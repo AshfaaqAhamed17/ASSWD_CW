@@ -13,7 +13,7 @@
             <form class="px-4">
                 <div class="pt-4 pb-3 fw-bold login_name">Log In</div>
                 <div class="mb-3">
-                    <input type="email" class="form-control" id="inputUserName" placeholder="Enter Username">
+                    <input type="text" class="form-control" id="inputUserName" placeholder="Enter Username">
                 </div>
                 
                 <div class="mb-3 input-group" id="show_hide_password">
@@ -83,7 +83,7 @@
 
                 console.log(" LINE 76 ", this.model.toJSON());
                 $.ajax({
-                    url: '<?php echo base_url() ?>api/Auth',
+                    url: '<?php echo base_url() ?>api/Auth/login',
                     type: 'POST',
                     data: this.model.toJSON(),
                     
@@ -95,20 +95,52 @@
                     localStorage.setItem('userID', response.userID);
                     localStorage.setItem('lmessageogged-in', true);
                     localStorage.setItem('userDescription', response.userDescription);
+                    localStorage.setItem('userAddress', response.userAddress);
+                    localStorage.setItem('userTelNo', response.userTelNo);
+                    localStorage.setItem('userFirstName', response.userFirstName);
+                    localStorage.setItem('userLastName', response.userLastName);
                     
                     alert('User Logged In Successfully');
+
+                    // redirect(/<?php echo base_url() ?>Profile/);
                     window.location.href = '<?php echo base_url() ?>Profile';
                 }).fail(function(response) {
                     console.log(" LINE 87 ", response.responseJSON);
                     alert(response.responseJSON);
                 });
+
+                
             }
         }
         
     });
     
     var loginView = new LoginView();
+
+//     var AppView = Backbone.View.extend({
+//         initialize: function() {
+//             //start the token expiration timer
+//             this.checkTokenExpiration();
+//             console.log(" LINE 116 CHECK TOKEN EXPIRATION");
+//         },
+//         checkTokenExpiration: function() {
+//             var token = localStorage.getItem('jwt');
+//             var payload = JSON.parse(atob(token.split('.')[1]));
+
+//             var exp = payload.exp;
+//             var currentTime = new Date().getTime() / 1000;
+//             if (exp < currentTime) {
+//                 // Token has expired, log the user out
+//         localStorage.clear();
+//         // window.location.href = 'Login';
+//         window.location.href = '<?php echo base_url() ?>Login';
+        
+//     } else {
+//         // Token is still valid, set a timer to check again in the future
+//         setTimeout(this.checkTokenExpiration.bind(this), (exp - currentTime) * 1000);
+//     }
+// }
+// });
+// var appView = new AppView();
+
 </script>
-<?php
-// $this->load->view('templates/footer');
-?>

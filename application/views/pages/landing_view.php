@@ -3,7 +3,7 @@
 
 <div class="container-fluid landing_cont px-0">
     <img src="./../assets/images/login.webp" class="landing_img" />
-    <div class="landing_img_txt">Welcome to the #App name#</div>
+    <div class="landing_img_txt fs-1 text-center" style="font-weight:bold">Welcome to the <span style="color:red">SNACKBAR</span></div>
 
     <div class="my-5">
         <p class="text-center fs-1 fw-bold landing_heading_1">Explore our explicit contents.</p>
@@ -52,14 +52,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 
-            <img src="./../assets/images/logo.png" class="post_image" />
-            <img src="./../assets/images/logo.png" class="post_image" />
-            <img src="./../assets/images/logo.png" class="post_image" />
-            <img src="./../assets/images/logo.png" class="post_image" />
-            <img src="./../assets/images/logo.png" class="post_image" /> -->
-
         </div>
     </div>
 </div>

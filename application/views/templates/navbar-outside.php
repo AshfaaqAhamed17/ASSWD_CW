@@ -2,8 +2,8 @@
     <div class="container-fluid">
         <a class="navbar-brand">SnackBar</a>
         <form class="d-flex">
-            <button class="btn btn-primary mx-1">Login</button>
-            <button class="btn btn-primary mx-1">SignUp</button>
+            <a href = "login" class="btn btn-primary mx-1">Login</a>
+            <a href = "signup" class="btn btn-primary mx-1">SignUp</a>
         </form>
     </div>
 </nav>
