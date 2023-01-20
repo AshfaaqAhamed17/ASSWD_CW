@@ -99,6 +99,7 @@
                     localStorage.setItem('userTelNo', response.userTelNo);
                     localStorage.setItem('userFirstName', response.userFirstName);
                     localStorage.setItem('userLastName', response.userLastName);
+                    localStorage.setItem('profileImage', response.profileImage);
                     
                     alert('User Logged In Successfully');
 

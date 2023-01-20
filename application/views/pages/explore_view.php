@@ -1,6 +1,6 @@
 <?php $this->load->view('templates/header'); ?>
 <?php $this->load->view('templates/navbar'); ?>
-
+   
 <div class="container-fluid py-3 " id="explore_page">
     <div class="helo">
 
@@ -99,8 +99,8 @@
                         </div>
                         <div>
                         <form class="d-flex mt-3">
-                            <input class="form-control me-2" placeholder="Comment...">
-                            <button class="btn btn-primary" id="searchBtn">Submit</button>
+                        <input class="form-control me-2" placeholder="Comment..." id="inputComment">
+                            <button type="button" class="btn btn-primary" id="commentBtn">Comment</button>
                         </form>
                         </div>
                     </div>
@@ -112,6 +112,36 @@
         </div>
     </div>
 </div>
+
+<!-- create a modal -->
+<!-- <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create a post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex flex-column">
+                <div class="mb-3">
+                    <input type="file" class="form-control" id="postImage">
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" id="postCaption" placeholder="Caption"></textarea>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="postHashtags" placeholder="Tags">
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="postLocation" placeholder="Location">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="createPostBtn">Create</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+
 
 <script>
 
@@ -129,12 +159,52 @@
     console.log("local -- ",user_id, user_name);
 
 
+    // } 
+
+    // INSERT A COMMENT TO A POST
+    function insertComment(postID, e) {
+        $(document).on('click', '#commentBtn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var comment = $('#inputComment').val();
+            // var post_id = $('.postid_img').attr('data-postid');
+            console.log("comment to insert -- ",comment);
+            console.log("comments post id -- ",postID);
+            
+            $.ajax({
+                url: '<?php echo base_url() ?>api/Comment/insertComment',
+                type: 'POST',
+                data: {
+                    'postID': postID,
+                    'comment': comment,
+                    'userID': user_id
+                },
+            }).done(function(data) {
+                if(data.status = true){
+                    console.log(data);
+                    alert("Comment added successfully");
+                    // CLOSE THE POPUP
+                    $('#editProfileModal').modal('hide');
+                    window.location.reload();
+                    // $('#postModal').modal('hide');
+                    
+                    // window.location.href = '<?php echo base_url() ?>Profile';
+                }else{
+                    alert("Comment adding failed");
+                }
+            });
+        });
+    }
+
+    // OPEN POSTS POPUP AND LOAD POST AND COMMENTS
     $(document).on('click', '.postid_img', function() {
         var img_src = $(this).attr('src');
         var img_cap = $(this).attr('data-caption');
         var img_time = $(this).attr('data-cTime');
         var post_id = $(this).attr('id');
         var post_user_name = $(this).attr('data-uname');
+
+        insertComment(post_id);
 
         console.log( "140  --  ",post_id);
         console.log( "141  --  ",$(this).attr('src'));

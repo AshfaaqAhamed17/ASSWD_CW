@@ -6,8 +6,8 @@
     <div class="container-fluid row mt-4 px-5">
 
         <div class="col-2">
-            <div class="w-100 d-flex align-items-center justify-content-center" style="height: 100%;">
-                <img src="./../assets/images/user.png" class="img-fluid w-50">
+            <div class="d-flex align-items-center justify-content-center rounded-circle" style="overflow: hidden; background-color: black; width:150px; height:150px">
+                <img src="" class="img-fluid" style="height:100%" id="main_prof_pic">
             </div>
         </div>
         <div class="col-5" id="uname_desc">
@@ -149,6 +149,7 @@
     var userTelNo = localStorage.getItem("userTelNo") !== 'null' ? localStorage.getItem("userTelNo") : 0000000000;
     var userFirstName = localStorage.getItem("userFirstName") !== 'null' ? localStorage.getItem("userFirstName") : "";
     var userLastName = localStorage.getItem("userLastName") !== 'null' ? localStorage.getItem("userLastName") : "";
+    var profileImage = localStorage.getItem("profileImage") !== 'null' ? localStorage.getItem("profileImage") : "default.jpg";
    
     console.log("local -- ",user_id, " | ", user_name, " | ", userDescription);
 
@@ -171,60 +172,69 @@
         var utelnum = $('#utelnum').val();
         var uaddress = $('#uaddress').val();
         var udesc = $('#udesc').val();
-        // var profile_img = $('#profile_img').val();
+
+        var formData = new FormData();
+        formData.append('userID', user_id);
+        formData.append('userName', uname);
+        formData.append('fName', ufname);
+        formData.append('lName', ulname);
+        formData.append('telNum', utelnum);
+        formData.append('uAddress', uaddress);
+        formData.append('uDesc', udesc);
+        formData.append('profileImg', $('#profile_img')[0].files[0]);
 
         $.ajax({
             url: '<?php echo base_url() ?>api/Auth/updateProfile',
             type: 'POST',
-            data: {
-                'userID': user_id,
-                'userName': uname,
-                'fName': ufname,
-                'lName': ulname,
-                'telNum': utelnum,
-                'uAddress': uaddress,
-                'uDesc': udesc,
-                // 'profileImg': profile_img
-            },
+            data: formData,
+            processData: false,
+            contentType: false,
         }).done(function(data) {
+            console.log("data -- ",data);
             if(data.status = true){
                 console.log(data);
                 console.log("data Desc-- ",data.data.userDescription);
                 alert("Profile updated successfully");
+
+                // CLOSE THE POPUP
+                $('#editProfileModal').modal('hide');
+
                 localStorage.setItem('userDescription', data.data.userDescription);
                 localStorage.setItem('userAddress', data.data.userAddress);
                 localStorage.setItem('userTelNo', data.data.userTelNo);
                 localStorage.setItem('userFirstName', data.data.userFirstName);
                 localStorage.setItem('userLastName', data.data.userLastName);
-
-                // CLOSE THE POPUP
-                $('#editProfileModal').modal('hide');
+                localStorage.setItem('profileImage', data.data.profileImage);
+                
                 window.location.reload();
 
                 // window.location.href = '<?php echo base_url() ?>Profile';
             }else{
                 alert("Profile update failed");
             }
+        }).fail(function(data) {
+            console.log("error -- ",data);
         });
     });
 
     // INSERT A COMMENT TO A POST
-    function insertComment(postID) {
-
-        $(document).on('click', '#commentBtn', function() {
+    function insertComment(postID, e) {
+        $(document).on('click', '#commentBtn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             var comment = $('#inputComment').val();
-        // var post_id = $('.postid_img').attr('data-postid');
-        console.log("comment to insert -- ",comment);
-        console.log("comments post id -- ",postID);
-        
-        $.ajax({
-            url: '<?php echo base_url() ?>api/Comment/insertComment',
-            type: 'POST',
-            data: {
-                'postID': postID,
-                'comment': comment,
-                'userID': user_id
-            },
+            // var post_id = $('.postid_img').attr('data-postid');
+            console.log("comment to insert -- ",comment);
+            console.log("comments post id -- ",postID);
+            
+            $.ajax({
+                url: '<?php echo base_url() ?>api/Comment/insertComment',
+                type: 'POST',
+                data: {
+                    'postID': postID,
+                    'comment': comment,
+                    'userID': user_id
+                },
             }).done(function(data) {
                 if(data.status = true){
                     console.log(data);
@@ -343,6 +353,8 @@
                     </div>
                     `
                 );
+                $("#main_prof_pic").attr('src', "http://localhost/codeigniter-cw/uploads/profiles/default.jpg"); 
+                // + profileImage);
             }else{
                 var posts = allUserPosts['models'][0]['attributes']['data'];
                 console.log("Post: ", posts);
@@ -368,6 +380,7 @@
                     $('#post_imgs').append(postCard);
                     
                 }
+                $("#main_prof_pic").attr('src', "http://localhost/codeigniter-cw/uploads/profiles/" + profileImage);
                 $('#stats_posts').append("<p class='text-center fs-3 fw-bold landing_heading_1' >"+posts.length+" <br />Posts</p>");
                 $("#uname_desc").append(`
                     <p class='text-start fs-4 fw-bold m-0'>${user_name}</p>

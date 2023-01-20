@@ -28,6 +28,7 @@ class Post extends REST_Controller
         $userID = $this->post('userID');
         $caption = $this->post('caption');
         $location  = $this->post('location');
+        
 
         if (!isset($userID)) {
             $this->response([
@@ -36,11 +37,12 @@ class Post extends REST_Controller
             ], REST_Controller::HTTP_UNAUTHORIZED);
         } else {
             if (!$this->upload->do_upload('image')) {
-                var_dump($this->upload->do_upload());
+                // var_dump($this->upload->do_upload());
                 $error = array('error' => $this->upload->display_errors());
+
                 $this->response([
                     'status' => FALSE,
-                    'message' => $error
+                    'message' => $error['error']
                 ], REST_Controller::HTTP_BAD_REQUEST);
             } else {
                 $data = array('upload_data' => $this->upload->data());

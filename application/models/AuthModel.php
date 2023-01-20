@@ -43,7 +43,7 @@ class AuthModel extends CI_Model
     }
 
     //update user profile
-    public function updateProfile($userID, $username, $ufname, $ulname, $utelnum, $uaddress, $udesc)
+    public function updateProfile($userID, $username, $ufname, $ulname, $utelnum, $uaddress, $udesc, $profileImg)
     {
         $data = array(
             'userFirstName' => $ufname,
@@ -51,6 +51,7 @@ class AuthModel extends CI_Model
             'userTelNo' => $utelnum,
             'userAddress' => $uaddress,
             'userDescription' => $udesc,
+            'profileImage' => $profileImg
         );
         $this->db->where('userID', $userID);
         $this->db->update('user_detail', $data);

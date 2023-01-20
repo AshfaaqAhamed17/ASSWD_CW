@@ -13,6 +13,8 @@ class Auth extends REST_Controller
     {
         parent::__construct();
         $this->load->model('AuthModel');
+        $this->upload_path = "uploads/profiles/";
+
     }
 
     // Register User & Login User
@@ -35,6 +37,7 @@ class Auth extends REST_Controller
             }
         } else {
             $login = $this->AuthModel->loginUser($username, $password);
+            // var_dump($login);
             if ($login) {
                 $jwt = new JWT();
                 $key = getenv('JWT_SECRET');
@@ -66,7 +69,8 @@ class Auth extends REST_Controller
                     "userAddress" => $login->userAddress,
                     "userTelNo" => $login->userTelNo,
                     "userFirstName" => $login->userFirstName,
-                    "userLastName" => $login->userLastName                
+                    "userLastName" => $login->userLastName,
+                    "profileImage" => $login->profileImage
                 ], REST_Controller::HTTP_OK);
             } else {
                 $this->response([
@@ -87,14 +91,56 @@ class Auth extends REST_Controller
         $telNum = $this->post('telNum') ? $this->post('telNum') : NULL;
         $uAddress = $this->post('uAddress') ? $this->post('uAddress') : NULL;
         $uDesc = $this->post('uDesc') ? $this->post('uDesc') : NULL;
-        // $profileImg = $this->post('profileImg');
+        $profileImg = $this->post('profileImg');
+        
+        if (!isset($userID)) {
+            $this->response([
+                'status' => FALSE,
+                'message' => 'User ID is required'
+            ], REST_Controller::HTTP_BAD_REQUEST);
+        }else{
+            $config['upload_path'] = './uploads/profiles/';
+            $config['allowed_types'] = 'gif|jpg|png|jpeg';
+            $config['encrypt_name'] = TRUE;
+            $config['maintain_ratio'] = TRUE;
 
-        $response = $this->AuthModel->updateProfile($userID, $username, $fName, $lName, $telNum, $uAddress, $uDesc);
-        // var_dump($response);
-        $this->response([
-            'data' => $response,
-            'status' => TRUE,
-            'message' => 'User profile updated successfully'
-        ], REST_Controller::HTTP_OK);
+            $this->load->library('upload', $config);
+
+
+            if (!$this->upload->do_upload('profileImg')) {
+                $error = array('error' => $this->upload->display_errors());
+                $this->response([
+                    'status' => FALSE,
+                    'message' => $error
+                ], REST_Controller::HTTP_BAD_REQUEST);
+            } else {
+                $data = array('upload_data' => $this->upload->data());
+                $profileImg = $data['upload_data']['file_name'];
+
+                $source_img_path = $this->upload_path . $data['upload_data']['file_name'];
+                $config['image_library'] = 'gd2';
+                $config['source_image'] = $source_img_path;
+                $config['maintain_ratio'] = TRUE;
+                $config['width'] = 100;
+                $config['height'] = 100;
+                $this->load->library('image_lib', $config);
+                $this->image_lib->resize();
+                    
+                $response = $this->AuthModel->updateProfile($userID, $username, $fName, $lName, $telNum, $uAddress, $uDesc, $profileImg);
+                if ($response) {
+                    $this->response([
+                        'data' => $response,
+                        'status' => TRUE,
+                        'message' => 'User profile updated successfully'
+                    ], REST_Controller::HTTP_OK);
+                } else {
+                    $this->response([
+                        'status' => FALSE,
+                        'message' => 'User profile update failed'
+                    ], REST_Controller::HTTP_BAD_REQUEST);
+                }
+            }
+    
+        }
     }
 }
