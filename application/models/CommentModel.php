@@ -9,8 +9,14 @@ class CommentModel extends CI_Model
             'postID' => $postID,
             'userID' => $userID
         );
-        $this->db->insert('comment', $data);
-        return $this->db->insert_id();
+        $response = $this->db->insert('comment', $data);
+        
+        // if ($response) {
+        //     return $this->db->insert_id();
+        // } else {
+        //     return false;
+        // }
+        return ( $response ? $this->db->insert_id() : $this->db->error());
     }
 
     public function getComment($id)

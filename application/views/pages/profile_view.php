@@ -68,15 +68,15 @@
 
                     <div class="col-8">
                         <h5 id="post_cap"></h5>
-                        <div>#123 #123 Lorem ipsum.</div>
+                        <div>#HASHTAGS 123 #123 Lorem ipsum.</div>
                         <div class="bg-light mt-4 px-4 py-1 landing_card_txt" id="comSec" style="height: 400px;">
-                            <div class="d-flex align-items-start my-3" id="comSec">
+                            <div class="d-flex align-items-start my-3">
                             </div>
                         </div>
                         <div>
-                        <form class="d-flex mt-3">
-                            <input class="form-control me-2" placeholder="Comment...">
-                            <button class="btn btn-primary" id="searchBtn">Submit</button>
+                        <form class="d-flex mt-3" id="cmmntSec">
+                            <input class="form-control me-2" placeholder="Comment..." id="inputComment">
+                            <button type="button" class="btn btn-primary" id="commentBtn">Comment</button>
                         </form>
                         </div>
                     </div>
@@ -152,7 +152,7 @@
    
     console.log("local -- ",user_id, " | ", user_name, " | ", userDescription);
 
-    // open modal popup to edit profile
+    // OPEN POPUP FOR EDITING PROFILE
     $(document).on('click', '#edit_btn', function() {
         $('#editProfileModal').modal('show');
         $('#uname').val(user_name);
@@ -163,7 +163,7 @@
         $('#udesc').val(userDescription);
     });
 
-    // update profile to the database
+    // EDIT USER DETAILS
     $(document).on('click', '#updateProfile', function() {
         var uname = $('#uname').val();
         var ufname = $('#ufname').val();
@@ -197,9 +197,8 @@
                 localStorage.setItem('userFirstName', data.data.userFirstName);
                 localStorage.setItem('userLastName', data.data.userLastName);
 
-                // close the modal popup
+                // CLOSE THE POPUP
                 $('#editProfileModal').modal('hide');
-                // reload the page to update the profile details  
                 window.location.reload();
 
                 // window.location.href = '<?php echo base_url() ?>Profile';
@@ -209,12 +208,48 @@
         });
     });
 
+    // INSERT A COMMENT TO A POST
+    function insertComment(postID) {
 
-    $(document).on('click', '.postid_img', function() {
+        $(document).on('click', '#commentBtn', function() {
+            var comment = $('#inputComment').val();
+        // var post_id = $('.postid_img').attr('data-postid');
+        console.log("comment to insert -- ",comment);
+        console.log("comments post id -- ",postID);
+        
+        $.ajax({
+            url: '<?php echo base_url() ?>api/Comment/insertComment',
+            type: 'POST',
+            data: {
+                'postID': postID,
+                'comment': comment,
+                'userID': user_id
+            },
+            }).done(function(data) {
+                if(data.status = true){
+                    console.log(data);
+                    alert("Comment added successfully");
+                    // CLOSE THE POPUP
+                    $('#editProfileModal').modal('hide');
+                    window.location.reload();
+                    // $('#postModal').modal('hide');
+                    
+                    // window.location.href = '<?php echo base_url() ?>Profile';
+                }else{
+                    alert("Comment adding failed");
+                }
+            });
+        });
+    }
+    
+    
+    // OPEN POSTS POPUP AND LOAD POST AND COMMENTS
+    $(document).on('click', '.postid_img', function openPostPopup() {
         var img_src = $(this).attr('src');
         var img_cap = $(this).attr('data-caption');
         var img_time = $(this).attr('data-cTime');
         var post_id = $(this).attr('id');
+        insertComment(post_id);
         console.log( "140  --  ",post_id);
         console.log( "141  --  ",$(this).attr('src'));
         console.log( "142  --  ",$(this).attr('data-caption'));
@@ -264,19 +299,7 @@
         $('#postModal').modal('show');
     });
 
-    var LogoutView = Backbone.View.extend({
-        el: "#profile_div",
-        events: {
-            'click #logout': 'logout'
-        },
-        logout: function(){
-            localStorage.clear();
-            window.location.href = '<?php echo base_url() ?>Login';
-        }
-    });
-
-    var logoutView = new LogoutView();
-
+    // GET USERS POSTS AND DISPLAY IN CARDS. {PROFILE PAGE - model & collection to get posts}
     var ProfilePostModel = Backbone.Model.extend({
         url: "<?php echo base_url() ?>api/Post/"+user_id,
         defaults: {
@@ -299,10 +322,8 @@
 
     var allUserPosts = new ProfilePostCollection();
     allUserPosts.fetch({async: false})
-    // .done(() => {
-    //     console.log("Profile Post Collection Fetched", allUserPosts['models'][0]['attributes']['data']);
-    // });
 
+    // DISPLAY THE POSTS. {PROFILE PAGE - view to display posts}
     var ProfilePostView = Backbone.View.extend({
         el: "#profile_div",
         initialize: function() {
@@ -345,6 +366,7 @@
                     </div>
                     `;
                     $('#post_imgs').append(postCard);
+                    
                 }
                 $('#stats_posts').append("<p class='text-center fs-3 fw-bold landing_heading_1' >"+posts.length+" <br />Posts</p>");
                 $("#uname_desc").append(`
@@ -356,11 +378,26 @@
                     </div>
                     `
                 );
+                
             }
         }
     });
 
     var profilePostView = new ProfilePostView();
+
+    // LOGOUT USER
+    var LogoutView = Backbone.View.extend({
+        el: "#profile_div",
+        events: {
+            'click #logout': 'logout'
+        },
+        logout: function(){
+            localStorage.clear();
+            window.location.href = '<?php echo base_url() ?>Login';
+        }
+    });
+
+    var logoutView = new LogoutView();
 
 </script>
 

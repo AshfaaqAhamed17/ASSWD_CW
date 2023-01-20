@@ -92,31 +92,9 @@
 
                     <div class="col-8">
                         <h5 id="post_cap"></h5>
-                        <div>#123 #123 Lorem ipsum.</div>
-                        <div class="bg-light mt-4 px-4 py-1 landing_card_txt" style="height: 400px;">
+                        <div>#HASHTAGS 123 #123 Lorem ipsum.</div>
+                        <div class="bg-light mt-4 px-4 py-1 landing_card_txt" id="comSec" style="height: 400px;">
                             <div class="d-flex align-items-start my-3">
-                                <img src="./../assets/images/user.png" class="post_card_comment_userimg">
-                                <div class="ms-3 w-100">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h6>Username</h6>
-                                        <h6>Today</h6>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-start my-3">
-                                <img src="./../assets/images/user.png" class="post_card_comment_userimg">
-                                <div class="ms-3 w-100">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h6>Username</h6>
-                                        <h6>Today</h6>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                                </div>
                             </div>
                         </div>
                         <div>
@@ -155,18 +133,59 @@
         var img_src = $(this).attr('src');
         var img_cap = $(this).attr('data-caption');
         var img_time = $(this).attr('data-cTime');
-        var img_uname = $(this).attr('data-uName');
+        var post_id = $(this).attr('id');
+        var post_user_name = $(this).attr('data-uname');
 
-        console.log( "133  --  ",$(this).attr('src'));
-        console.log( "134  --  ",$(this).attr('data-caption'));
-        
+        console.log( "140  --  ",post_id);
+        console.log( "141  --  ",$(this).attr('src'));
+        console.log( "142  --  ",$(this).attr('data-caption'));
+
+        $('#comSec').text("");
         $('#post_img').attr('src', img_src);
         $('#post_cap').text(img_cap);
         $('#postCreatedTime').text(img_time);
-        $('#post_username').text(img_uname);
+        $('#post_username').text(post_user_name);
         
+        $.ajax({
+            url: '<?php echo base_url() ?>api/Comment/' + post_id,
+            type: 'GET',
+            data: {
+                postID : post_id
+            }
+        }).done(function(response) {
+            if(response.status == true){
+                console.log("yes comments -- ",response['data']);
+                for(var i=0; i<response['data'].length; i++){
+                    console.log("yes comments -- ",response['data'][i].comment);
+                    $('#comSec').append(`
+                        
+                    <div class="d-flex align-items-start my-3">
+                        <img src="./../assets/images/user.png" class="post_card_comment_userimg">
+                        <div class="ms-3 w-100" >
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6>`+response['data'][i].userName+`</h6>
+                                <h6>`+response['data'][i].createdTime+`</h6>
+                            </div>
+                            <p>`+response['data'][i].comment+`</p>
+                        </div>
+                    </div>
+                        `);
+                }
+            }else{
+                console.log("no comments -- ",response);
+                $('#comSec').append(`   
+                    <p class="text-center my-5">`+ response['message'] +`</p>
+                `);
+            }
+        }).fail(function(response) {
+            console.log("no  -- ",response);
+           
+        })
+
         $('#postModal').modal('show');
     });
+
+
 
     var ProfilePostModel = Backbone.Model.extend({
         url: "<?php echo base_url() ?>api/Post/",
@@ -219,8 +238,8 @@
                     
                     var postCard = `
                     <div class="col">
-                    <div class="card shadow-lg">
-                    <img src="http://localhost/codeigniter-cw/uploads/${postImg}" class="card-img-top postid_img" height=350 
+                    <div class="card rounded shadow-lg ">
+                    <img src="http://localhost/codeigniter-cw/uploads/${postImg}" class="card-img postid_img" height=350 
                         id="${postID}" data-caption="${postCaption}" data-cTime="${postCreatedTime}" data-uname="${uName}">
                     </div>
                     </div>
@@ -243,6 +262,9 @@
 
 </script>
 
+<div style="height:75px"></div>
+
 <?php
+
 $this->load->view('templates/footer');
 ?>
