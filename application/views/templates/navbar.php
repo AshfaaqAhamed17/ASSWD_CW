@@ -85,6 +85,8 @@
                 if(data.status = true){
                     console.log(data);
                     alert("Post added successfully");
+                    $('#createPostModal').modal('hide');
+                    window.location.reload();
                 }
             }).fail(function(data) {
                 console.log(data);
