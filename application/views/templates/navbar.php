@@ -13,7 +13,7 @@
         </div>
     </nav>
 
-    <!-- create a modal -->
+    <!-- INSERT A POST -->
     <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -76,7 +76,7 @@
             console.log("postFormData -- ",postFormData);
 
             $.ajax({
-                url: '<?php echo base_url() ?>api/Post/insertPost',
+                url: '<?php echo base_url() ?>api/Post/',
                 type: 'POST',
                 data: postFormData,
                 processData: false,

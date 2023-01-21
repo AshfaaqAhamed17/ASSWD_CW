@@ -37,7 +37,6 @@ class Auth extends REST_Controller
             }
         } else {
             $login = $this->AuthModel->loginUser($username, $password);
-            // var_dump($login);
             if ($login) {
                 $jwt = new JWT();
                 $key = getenv('JWT_SECRET');
@@ -108,11 +107,19 @@ class Auth extends REST_Controller
 
 
             if (!$this->upload->do_upload('profileImg')) {
-                $error = array('error' => $this->upload->display_errors());
-                $this->response([
-                    'status' => FALSE,
-                    'message' => $error
-                ], REST_Controller::HTTP_BAD_REQUEST);
+                $response = $this->AuthModel->updateProfile($userID, $username, $fName, $lName, $telNum, $uAddress, $uDesc, NULL);
+                if ($response) {
+                    $this->response([
+                        'data' => $response,
+                        'status' => TRUE,
+                        'message' => 'User profile updated successfully'
+                    ], REST_Controller::HTTP_OK);
+                } else {
+                    $this->response([
+                        'status' => FALSE,
+                        'message' => 'User profile update failed'
+                    ], REST_Controller::HTTP_BAD_REQUEST);
+                }
             } else {
                 $data = array('upload_data' => $this->upload->data());
                 $profileImg = $data['upload_data']['file_name'];

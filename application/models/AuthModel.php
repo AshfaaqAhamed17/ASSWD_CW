@@ -50,12 +50,18 @@ class AuthModel extends CI_Model
             'userLastName' => $ulname,
             'userTelNo' => $utelnum,
             'userAddress' => $uaddress,
-            'userDescription' => $udesc,
-            'profileImage' => $profileImg
+            'userDescription' => $udesc
         );
+
+        if ($profileImg != NULL) {
+            $data['profileImage'] = $profileImg;
+        }
         $this->db->where('userID', $userID);
         $this->db->update('user_detail', $data);
-        // return $this->db->affected_rows();
-        return $data;
+        // get updated data from db and return
+        $res = $this->db->get_where('user_detail', array('userID' => $userID));
+        $row = $res->row();
+        return $row;
+        
     }
 }

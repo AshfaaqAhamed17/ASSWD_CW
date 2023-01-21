@@ -13,6 +13,7 @@ class Post extends REST_Controller
     {
         parent::__construct();
         $this->load->model('PostModel');
+        $this->load->model('HashtagModel');
         $this->upload_path = "uploads/";
     }
 
@@ -28,7 +29,7 @@ class Post extends REST_Controller
         $userID = $this->post('userID');
         $caption = $this->post('caption');
         $location  = $this->post('location');
-        
+        $hashtags = $this->post('hashtags');
 
         if (!isset($userID)) {
             $this->response([
@@ -59,11 +60,19 @@ class Post extends REST_Controller
                 $this->load->library('image_lib', $config);
                 $this->image_lib->resize();
 
-                $this->PostModel->insertPost($post, $caption, $userID, $location);
+                $response = $this->PostModel->insertPost($post, $caption, $userID, $location);
+                
+                if ($response) {
+                    $data = array(
+                        'hashtags' => $hashtags,
+                        'postID' => $response
+                    );
+                    $this->HashtagModel->saveHashtag($hashtags, $response);
+                }
                 $this->response([
                     'status' => TRUE,
                     'message' => 'Image uploaded successfully',
-                    'data' => $data
+                    'data' => $data,
                 ], REST_Controller::HTTP_CREATED);
             }
         }

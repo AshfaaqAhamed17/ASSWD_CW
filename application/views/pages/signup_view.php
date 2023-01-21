@@ -112,7 +112,6 @@
             }
             else if(this.model.get('password') !== this.model.get('confirmPassword') ){
                 alert('Password and Confirm Password must be same');
-                // Show an error message or take other necessary action
             }
             else{
                 // Save the model

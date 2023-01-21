@@ -31,11 +31,10 @@
         <div class="row row-cols-md-4 g-3" id="post_imgs">
         </div>
     </div>
-
 </div>
 <div class="mt-5"></div>
 
-<!-- popup view to display image after onlick -->
+<!-- POPUP VIEW TO DISPLAY THE IMAGE AFTER CLICKING -->
 <div class="modal fade bd-example-modal-xl" id="postModal" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
@@ -68,7 +67,7 @@
 
                     <div class="col-8">
                         <h5 id="post_cap"></h5>
-                        <div>#HASHTAGS 123 #123 Lorem ipsum.</div>
+                        <div id="hashtags"></div>
                         <div class="bg-light mt-4 px-4 py-1 landing_card_txt" id="comSec" style="height: 400px;">
                             <div class="d-flex align-items-start my-3">
                             </div>
@@ -83,13 +82,13 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="delete_btn"><i class="fa fa-trash" style="color: white; font-size: 20px; margin-right: 12px" aria-hidden="true"></i>Delete Post</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- modal popup view to edit profile -->
+<!-- POPUP VIEW TO EDIT PROFILE -->
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
         <div class="modal-content">
@@ -99,10 +98,6 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <!-- <div class="mb-3">
-                        <label for="uname" class="col-form-label">Username:</label>
-                        <input type="text" class="form-control" id="uname">
-                    </div> -->
                     <div class="mb-3">
                         <input type="text" class="form-control" id="ufname" placeholder="First Name">
                     </div>
@@ -207,8 +202,6 @@
                 localStorage.setItem('profileImage', data.data.profileImage);
                 
                 window.location.reload();
-
-                // window.location.href = '<?php echo base_url() ?>Profile';
             }else{
                 alert("Profile update failed");
             }
@@ -242,9 +235,6 @@
                     // CLOSE THE POPUP
                     $('#editProfileModal').modal('hide');
                     window.location.reload();
-                    // $('#postModal').modal('hide');
-                    
-                    // window.location.href = '<?php echo base_url() ?>Profile';
                 }else{
                     alert("Comment adding failed");
                 }
@@ -252,19 +242,23 @@
         });
     }
     
-    
-    // OPEN POSTS POPUP AND LOAD POST AND COMMENTS
+    // OPEN POSTS POPUP |-> LOAD POST AND COMMENTS
     $(document).on('click', '.postid_img', function openPostPopup() {
         var img_src = $(this).attr('src');
         var img_cap = $(this).attr('data-caption');
         var img_time = $(this).attr('data-cTime');
         var post_id = $(this).attr('id');
+        var hashtags = $(this).attr('data-hashtags');
         insertComment(post_id);
+        deletePost(post_id);
+
+        console.log( "HASH==>   --  ", hashtags);
         console.log( "140  --  ",post_id);
         console.log( "141  --  ",$(this).attr('src'));
         console.log( "142  --  ",$(this).attr('data-caption'));
 
         $('#comSec').text("");
+        $('#hashtags').text(hashtags);
         $('#post_img').attr('src', img_src);
         $('#post_cap').text(img_cap);
         $('#postCreatedTime').text(img_time);
@@ -308,6 +302,39 @@
 
         $('#postModal').modal('show');
     });
+
+    // DELETE A USER POST (Only availble for the user who created the post & in my profile view)
+    function deletePost(postID, e) {            
+        $(document).on('click', '#delete_btn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log("post id to delete -- ",postID);
+
+            if (confirm("Are you sure you want ?")) {
+                $.ajax({
+                    url: '<?php echo base_url() ?>api/Post/' + postID,
+                    type: 'DELETE'
+                }).done(function(data) {
+                    if(data.status = true){
+                        console.log(data);
+                        alert("Post deleted successfully");
+                        // CLOSE THE POPUP
+                        $('#editProfileModal').modal('hide');
+                        window.location.reload();
+                        // $('#postModal').modal('hide');
+                        
+                        // window.location.href = '<?php echo base_url() ?>Profile';
+                    }else{
+                        alert("Post delete failed");
+                    }
+                });
+            } else {
+                console.log("no");
+            }
+            
+        });
+    }
 
     // GET USERS POSTS AND DISPLAY IN CARDS. {PROFILE PAGE - model & collection to get posts}
     var ProfilePostModel = Backbone.Model.extend({
@@ -359,6 +386,7 @@
                 var posts = allUserPosts['models'][0]['attributes']['data'];
                 console.log("Post: ", posts);
                 console.log("105 -- Posts: ", posts.length);
+                var hashtag2 = "#qq #rr #tt";
 
                 for (var i = 0; i < posts.length; i++) {
                     var post = posts[i];
@@ -368,12 +396,16 @@
                     var postCreatedTime = post['createdTime'];
                     var postID = post['postID'];
                     var userID = post['userID'];
-                    
+                    var hashtags = post['hashtags'];
+
+                    var hashtagsString = hashtags.join(" ");
+                    console.log("HASHTAGS STRING: ", hashtagsString);
+
                     var postCard = `
                     <div class="col">
                     <div class="card shadow-lg">
                     <img src="http://localhost/codeigniter-cw/uploads/${postImg}" class="card-img-top postid_img" height=350 
-                        id="${postID}" data-caption="${postCaption}" data-cTime="${postCreatedTime}" data-postid="${postID}">
+                        id="${postID}" data-caption="${postCaption}" data-cTime="${postCreatedTime}" data-postid="${postID}" data-hashtags="${hashtagsString}">
                     </div>
                     </div>
                     `;
