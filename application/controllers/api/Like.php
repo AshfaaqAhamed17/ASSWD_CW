@@ -22,7 +22,7 @@ class Like extends REST_Controller
         $res = $this->LikeModel->insertLike($postID, $userID);
         $this->response([
             'status' => TRUE,
-            'message' => 'Like added successfully',
+            'message' => 'Like recorded successfully',
             'res' => $res
         ], REST_Controller::HTTP_OK);
     }

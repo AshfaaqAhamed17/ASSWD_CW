@@ -56,7 +56,7 @@
                     <div class="col-4 text-center">
                         <img src="" class="img-fluid rounded" id="post_img" style="height: 500px;">
                         <div class="d-flex mt-2 px-2 justify-content-around">
-                            <a href="#" class="me-3 text-dark">
+                            <a id="likeBtn" class="me-3 text-dark my-auto" style="text-decoration: none; cursor: pointer" data-postID="">
                                 <i class="fa fa-heart fs-2" style="color:red" aria-hidden="true"></i>
                             </a>
                             <a href="#" class="me-3 text-dark">
@@ -66,6 +66,7 @@
                                 <i class="fa fa-share-square-o fs-2" aria-hidden="true"></i>
                             </a>
                         </div>
+                        <div id="post_likes" style="font-weigth: bold; margin-top: 5px"></div>
                     </div>
 
                     <div class="col-8">
@@ -161,6 +162,33 @@
         $('#udesc').val(userDescription);
     });
 
+    // LIKE THE POST
+    $(document).on('click', '#likeBtn', function() {
+        var post_id = $(this).attr('data-postID');
+
+        var formData = new FormData();
+        formData.append('postID', post_id);
+        formData.append('userID', user_id);
+
+        $.ajax({
+            url: '<?php echo base_url() ?>api/Like',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+        }).done(function(data) {
+            console.log("like data -- ",data.res);
+            if(data.res == 1){
+                alert("Post liked successfully!");
+                // window.location.reload();
+            }else if(data.res == 0){
+                alert("Post unlike!");
+            }
+        }).fail(function(data) {
+            console.log("error -- ",data);
+        });
+    });
+
     // EDIT USER DETAILS
     $(document).on('click', '#updateProfile', function() {
         var uname = $('#uname').val();
@@ -252,18 +280,27 @@
         var post_id = $(this).attr('id');
         var hashtags = $(this).attr('data-hashtags');
         var location = $(this).attr('data-location');
-        
-        console.log("Location -->>>>>>>> ",location);
-        
+        var likesCount = $(this).attr('data-likescount');
+
+        if (likesCount == 0) {
+            likesCount = 'No likes yet';
+        }else if(likesCount == 1){
+            likesCount = likesCount + ' like';
+        }else{
+            likesCount = likesCount + ' likes';
+        }
+                
         $('#comSec').empty();
         $('#postloc').empty();
         $('#hashtags').text(hashtags);
         $('#post_img').attr('src', img_src);
         $('#delete_btn').attr('data-postID', post_id);
         $('#commentBtn').attr('data-postID', post_id);
+        $('#likeBtn').attr('data-postID', post_id);
         $('#post_cap').text(img_cap);
         $('#postCreatedTime').text(img_time);
         $('#post_username').text(user_name);
+        $('#post_likes').text(likesCount);
 
         if(location == 'null'){
             $('#postloc').css('display','none');
@@ -430,8 +467,7 @@
                     var userID = post['userID'];
                     var hashtags = post['hashtags'];
                     var location = post['location'];
-
-                    console.log("LOCATION: ", location);
+                    var likesCount = post['NumberOfLikes'] !== undefined ? post['NumberOfLikes'] : 0;
 
                     var hashtagsString = hashtags.join(" ");
                     console.log("HASHTAGS STRING: ", hashtagsString);
@@ -441,7 +477,7 @@
                             <div class="card shadow-lg">
                                 <img src="http://localhost/codeigniter-cw/uploads/${postImg}" class="card-img postid_img" height=350 
                                     id="${postID}" data-caption="${postCaption}" data-cTime="${postCreatedTime}" data-postid="${postID}" 
-                                    data-hashtags="${hashtagsString}" data-location="${location}">
+                                    data-hashtags="${hashtagsString}" data-location="${location}" data-likescount="${likesCount}">
                             </div>
                         </div>
                     `;

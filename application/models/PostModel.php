@@ -23,6 +23,9 @@ class PostModel extends CI_Model
         
         $result3 = $query3->result_array();
 
+        $sql4 = "SELECT count(postID) as NumberOfLikes, postID FROM like_user_post GROUP BY postID";
+        $query4 = $this->db->query($sql4);
+
         foreach ($query->result() as $row) {
             $postID = $row->postID;
             $comments = array();
@@ -38,7 +41,12 @@ class PostModel extends CI_Model
                     $hashtags[] = '#' . $result3[$i]['hashtag'];
                 }
             }
-
+            foreach ($query4->result_array() as $row4) {
+                if ($row4['postID'] == $postID) {
+                    $row->NumberOfLikes = $row4['NumberOfLikes'];
+                }
+            }
+            
             $row->comments = $comments;
             $row->hashtags = $hashtags;
         }
@@ -60,6 +68,9 @@ class PostModel extends CI_Model
         $query3 = $this->db->query($sql3);
         
         $result3 = $query3->result_array();
+        
+        $sql4 = "SELECT count(postID) as NumberOfLikes, postID FROM like_user_post GROUP BY postID";
+        $query4 = $this->db->query($sql4);
 
         foreach ($query1->result() as $row) {
             $postID = $row->postID;
@@ -73,6 +84,11 @@ class PostModel extends CI_Model
             for ($i = 0; $i < count($query3->result_array()); $i++) {
                 if ($result3[$i]['postID'] == $postID) {
                     $hashtags[] = '#' . $result3[$i]['hashtag'];
+                }
+            }
+            foreach ($query4->result_array() as $row4) {
+                if ($row4['postID'] == $postID) {
+                    $row->NumberOfLikes = $row4['NumberOfLikes'];
                 }
             }
 
@@ -97,6 +113,11 @@ class PostModel extends CI_Model
         
         $result3 = $query3->result_array();
 
+        $sql4 = "SELECT count(postID) as NumberOfLikes, postID FROM like_user_post GROUP BY postID";
+        $query4 = $this->db->query($sql4);
+        // return $query4->result_array();
+
+
         foreach ($query1->result() as $row) {
             $postID = $row->postID;
             $comments = array();
@@ -112,6 +133,12 @@ class PostModel extends CI_Model
                     $hashtags[] = '#' . $result3[$i]['hashtag'];
                 }
             }
+            foreach ($query4->result_array() as $row4) {
+                if ($row4['postID'] == $postID) {
+                    $row->NumberOfLikes = $row4['NumberOfLikes'];
+                }
+            }
+
 
             $row->comments = $comments;
             $row->hashtags = $hashtags;
