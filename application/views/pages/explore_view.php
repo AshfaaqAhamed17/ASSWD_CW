@@ -19,7 +19,7 @@
                 </div>
             </div>
 
-        <div class="col-3">
+        <div class="col-3" id="explore_usercover_div" >
             <div class="w-100 explore_usercover_img d-flex align-items-center justify-content-center">
                 <div class="d-flex align-items-center justify-content-center rounded-circle" style="overflow: hidden; background-color: black; width:150px; height:150px">
                     <img src="" class="img-fluid" style="height:100%"  id="profPic">
@@ -103,7 +103,7 @@
     var profileImage = localStorage.getItem("profileImage") != 'null' ? localStorage.getItem("profileImage") : "default.jpg";
     console.log("local -- ",user_id, user_name);
 
-        // LIKE THE POST
+    // LIKE THE POST
     $(document).on('click', '#likeBtn', function() {
         var post_id = $(this).attr('data-postID');
 
@@ -123,13 +123,13 @@
                 alert("Post liked successfully!");
                 window.location.reload();
             }else if(data.res == 0){
-                alert("Post unlike!");
+                alert("Post unliked!");
+                window.location.reload();
             }
         }).fail(function(data) {
             console.log("error -- ",data);
         });
     });
-
 
     // INSERT A COMMENT TO A POST
         $(document).on('click', '#commentBtn', function(e) {
@@ -139,7 +139,6 @@
             var postID = $(this).attr('data-postID');
             console.log("comment to insert -- ",comment);
             console.log("comments post id -- ",postID);
-            
             
             $.ajax({
                 url: '<?php echo base_url() ?>api/Comment/insertComment',
@@ -194,7 +193,6 @@
         $(".post_card_userimg").attr('src', "http://localhost/codeigniter-cw/uploads/profiles/" + profilePic);
         $('#post_likes').text(likesCount);
 
-        
         if(location == 'null'){
             $('#postloc').css('display','none');
         }else{
@@ -262,7 +260,7 @@
                     var hashtags = posts['hashtags'];
                     var location = posts['location'];
                     var profileImage = posts['profileImage'];
-                    var likesCount = posts['NumberOfLikes'] !== undefined ? postS['NumberOfLikes'] : 0;
+                    var likesCount = posts['NumberOfLikes'] !== undefined ? posts['NumberOfLikes'] : 0;
 
                     console.log("Profile IMG: ", profileImage);
 
@@ -289,7 +287,6 @@
             }
         }).fail(function(response) {
             console.log("no  -- ",response);
-           
         })
     });
 

@@ -2,7 +2,12 @@
 <div class="card fixed-bottom text-center ">
     <div class="card-footer text-muted ">
         <small>&copy; Copyright 2022/23,<br /> SnackGram Corporation</small>
+        <!-- Back to top -->
+        <div class="d-flex justify-content-center mt-3">
+                <a href="#" class="btn btn btn-outline-primary" id="backToTop"><i class="fa fa-chevron-circle-up" aria-hidden="true"></i></a>
+            </div>
     </div>
+    
 </div>
 
     <!-- Bootstrap js -->

@@ -180,9 +180,11 @@
             console.log("like data -- ",data.res);
             if(data.res == 1){
                 alert("Post liked successfully!");
-                // window.location.reload();
+                window.location.reload();
             }else if(data.res == 0){
-                alert("Post unlike!");
+                alert("Post unliked!");
+                window.location.reload();
+
             }
         }).fail(function(data) {
             console.log("error -- ",data);

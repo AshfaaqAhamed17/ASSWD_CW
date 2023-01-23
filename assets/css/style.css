@@ -72,6 +72,19 @@
     background-color: #b6b6b6;
   }
 
+  #explore_usercover_div{
+        /* make div fixed when scrolling */
+        position: fixed;
+        float: right;
+        top: 0;
+        right: 0;
+        z-index: 1;
+        /* background-color: #F3F3F3; */
+        height: 100%;
+        /* padding: 100% 0; */
+        
+  }
+
   .explore_usercover_img{
     background-image: url("https://images.unsplash.com/photo-1487088678257-3a541e6e3922?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTF8fGNvdmVyJTIwcGhvdG98ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60");
     background-size: cover;
@@ -79,7 +92,18 @@
     background-position: center;
     height: 200px;
     border-radius: 100px 0px;
+    margin-top: 55%;
   }
+
+  #backToTop{
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    z-index: 1;
+    cursor: pointer;
+    /* display: none; */
+  }
+
 
 
   
