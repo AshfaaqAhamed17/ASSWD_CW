@@ -8,8 +8,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>SnackGram</title>
     <link rel="stylesheet" href="./../assets/css/style.css" />
+
+    <link rel="icon" href="http://localhost/codeigniter-cw/assets/images/logo2.png" type="image/x-icon">
 
     <!-- Add icon library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -29,7 +31,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <!-- Backbone js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.1/backbone-min.js"></script>
 
-    
+    <!-- swiper -->
+    <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/>
 
 </head>
 

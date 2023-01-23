@@ -10,18 +10,12 @@ class CommentModel extends CI_Model
             'userID' => $userID
         );
         $response = $this->db->insert('comment', $data);
-        
-        // if ($response) {
-        //     return $this->db->insert_id();
-        // } else {
-        //     return false;
-        // }
         return ( $response ? $this->db->insert_id() : $this->db->error());
     }
 
     public function getComment($id)
     {
-        $this->db->select('userName, comment.*');
+        $this->db->select('userName, user_detail.profileImage, comment.*');
         $this->db->from('user_detail');
         $this->db->where('postID', $id);
         $this->db->join('comment', 'user_detail.userID = comment.userID');

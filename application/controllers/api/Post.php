@@ -5,7 +5,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 require APPPATH . '/libraries/REST_Controller.php';
 
 use \Restserver\Libraries\REST_Controller;
-
 class Post extends REST_Controller
 {
 
@@ -38,7 +37,6 @@ class Post extends REST_Controller
             ], REST_Controller::HTTP_UNAUTHORIZED);
         } else {
             if (!$this->upload->do_upload('image')) {
-                // var_dump($this->upload->do_upload());
                 $error = array('error' => $this->upload->display_errors());
 
                 $this->response([

@@ -7,10 +7,12 @@ class PostModel extends CI_Model
         parent::__construct();
     }
 
-    public function getPost($id)
-    {
-        $sql1 = "SELECT post.*, user_detail.userName FROM post JOIN user_detail ON post.userID = user_detail.userID WHERE user_detail.userID = ".$id;
-        $query1 = $this->db->query($sql1);
+    public function getPostByTags($hashtags){
+        $sql = " SELECT post.*, user_detail.* FROM post JOIN user_detail ON post.userID = user_detail.userID 
+            INNER JOIN hashtag_post ON hashtag_post.postID = post.postID 
+            INNER JOIN hashtag ON hashtag.hashtagID = hashtag_post.hashtagID 
+            WHERE hashtag.hashtag = '".$hashtags."' ORDER BY post.createdTime DESC";
+        $query = $this->db->query($sql);
 
         $sql2 = "SELECT comment.*, user_detail.userName FROM comment JOIN user_detail ON comment.userID = user_detail.userID";
         $query2 = $this->db->query($sql2);
@@ -21,10 +23,7 @@ class PostModel extends CI_Model
         
         $result3 = $query3->result_array();
 
-        // var_dump($result3);
-        
-        
-        foreach ($query1->result() as $row) {
+        foreach ($query->result() as $row) {
             $postID = $row->postID;
             $comments = array();
             $hashtags = array();
@@ -43,17 +42,14 @@ class PostModel extends CI_Model
             $row->comments = $comments;
             $row->hashtags = $hashtags;
         }
-        return $query1->result();
-        // $this->db->select('*');
-        // $this->db->from('post');
-        // $this->db->where('userID ', $id);
-        // $query = $this->db->get();
-        // return $query->result();
+
+        return $query->result();
+
     }
 
-    public function getPosts()
-    { 
-        $sql1 = "SELECT post.*, user_detail.userName FROM post JOIN user_detail ON post.userID = user_detail.userID";
+    public function getPost($id)
+    {
+        $sql1 = "SELECT post.*, user_detail.* FROM post JOIN user_detail ON post.userID = user_detail.userID WHERE user_detail.userID = ".$id." ORDER BY post.createdTime DESC";
         $query1 = $this->db->query($sql1);
 
         $sql2 = "SELECT comment.*, user_detail.userName FROM comment JOIN user_detail ON comment.userID = user_detail.userID";
@@ -65,9 +61,42 @@ class PostModel extends CI_Model
         
         $result3 = $query3->result_array();
 
-        // var_dump($result3);
+        foreach ($query1->result() as $row) {
+            $postID = $row->postID;
+            $comments = array();
+            $hashtags = array();
+            foreach ($query2->result() as $row1) {
+                if ($row1->postID == $postID) {
+                    $comments[] = $row1;
+                }
+            }
+            for ($i = 0; $i < count($query3->result_array()); $i++) {
+                if ($result3[$i]['postID'] == $postID) {
+                    $hashtags[] = '#' . $result3[$i]['hashtag'];
+                }
+            }
+
+            $row->comments = $comments;
+            $row->hashtags = $hashtags;
+        }
+        return $query1->result();
+    }
+
+    public function getPosts()
+    { 
+    
+        $sql1 = "SELECT post.*, user_detail.* FROM post JOIN user_detail ON post.userID = user_detail.userID ORDER BY post.createdTime DESC";
+        $query1 = $this->db->query($sql1);
+
+        $sql2 = "SELECT comment.*, user_detail.userName FROM comment JOIN user_detail ON comment.userID = user_detail.userID";
+        $query2 = $this->db->query($sql2);
         
+        $sql3 = "SELECT hashtag.*, hashtag_post.* FROM hashtag INNER JOIN hashtag_post ON hashtag_post.hashtagID = hashtag.hashtagID ";
+                // WHERE hashtag_post.postID = ".$postID;
+        $query3 = $this->db->query($sql3);
         
+        $result3 = $query3->result_array();
+
         foreach ($query1->result() as $row) {
             $postID = $row->postID;
             $comments = array();

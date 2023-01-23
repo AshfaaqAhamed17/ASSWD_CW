@@ -3,11 +3,17 @@
 <div class="container-fluid auth-cont">
     <div class="row h-100">
         <div class="col-7 my-auto text-center">
-            <img src="./../assets/images/login.webp" class="login_img" />
+            <div id="slider">
+                <img class="slide active" src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8Y292ZXIlMjBwaG90b3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60">
+                <img class="slide" src="https://images.pexels.com/photos/1323206/pexels-photo-1323206.jpeg?cs=srgb&dl=pexels-mixu-1323206.jpg&fm=jpg" alt>
+                <img class="slide" src="https://images.unsplash.com/photo-1623627484632-f041d1fb366d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8Y292ZXIlMjBwaG90b3xlbnwwfHwwfHw%3D&w=1000&q=80" alt>
+                <img class="slide" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMoEt2rfhOCSA_EGB4U3RO93aFHyr1GMKX-A&usqp=CAU" alt>
+                <img class="slide" src="https://images.unsplash.com/photo-1484950763426-56b5bf172dbb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjB8fGNvdmVyJTIwcGhvdG98ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60" alt>
+            </div>
         </div>
         <div class="col-5 px-5 form_sec">
             <div class="text-center mt-5 pt-4 logo">
-                <img src="./../assets/images/logo.png" class="logo_img" />
+                <img src="http://localhost/codeigniter-cw/assets/images/logoSG.png" class="img-fluid" class="logo_img" />
             </div>
 
             <form class="px-4">
@@ -32,6 +38,20 @@
 </div>
 
 <script>
+
+    var slider = document.getElementById("slider");
+    var slides = slider.getElementsByClassName("slide");
+    var currentSlide = 0;
+
+    setInterval(function() {
+    for (var i = 0; i < slides.length; i++) {
+        slides[i].classList.remove("active");
+    }
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.add("active");
+    }, 4000);
+
+
     $(document).ready(function() {
         $("#show_hide_password a").on('click', function(event) {
             event.preventDefault();

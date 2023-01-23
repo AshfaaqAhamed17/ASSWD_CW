@@ -24,6 +24,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 $config['base_url'] = 'http://localhost/codeigniter-cw/index.php/';
+// $config['base_url'] = 'https://w1761334.users.ecs.westminster.ac.uk/codeigniter-cw/index.php/';
+
 
 /*
 |--------------------------------------------------------------------------

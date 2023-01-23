@@ -3,11 +3,12 @@
 
     <nav class="navbar navbar-dark sticky-top" style="background-color: black;">
         <div class="container-fluid align-middle">
-            <a class="navbar-brand">SnackBar</a>
-            <form class="d-flex" style="background-color: ">
+            <img src="http://localhost/codeigniter-cw/assets/images/logoSG.png" class="img-fluid" style="height:45px">
+
+            <form class="d-flex">
                 <a href = "explore"><i class="fa fa-home mx-2" style="color: white; font-size: 45px; margin-top: 2px" aria-hidden="true"></i></a>
                 <a href="" id="uploadPostOpen"><i class="fa fa-plus-circle mx-2" style="color: white; font-size: 45px; margin-top: 2px" aria-hidden="true"></i></a>
-                <a href="" id=""><i class="fa fa-bell mx-2" style="color: white; font-size: 40px; margin-top: 5px" aria-hidden="true"></i></a>
+                <a href="" id="notification"><i class="fa fa-bell mx-2" style="color: white; font-size: 40px; margin-top: 5px" aria-hidden="true"></i></a>
                 <a href = "profile"><img src="" class="img-fluid mx-2" id="profileImage" style="height:45px; width:45px; border-radius:100%; margin-top: 2px"></a>
             </form>
         </div>
@@ -43,14 +44,23 @@
     </div>                    
 </div>
 
+<!-- modal -->
+
 
 <script>
         //OPEN UPLOAD POST MODAL
-        $(document).on('click', '#uploadPostOpen', function(e) {
+    $(document).on('click', '#uploadPostOpen', function(e) {
         e.preventDefault();
         e.stopPropagation();
         $('#createPostModal').modal('show');
     });
+
+    $(document).on('click', '#notification', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#createPostModal').modal('show');
+    });
+
 
     var profileImage = localStorage.getItem("profileImage") !== 'null' ? localStorage.getItem("profileImage") : "default.jpg";
 

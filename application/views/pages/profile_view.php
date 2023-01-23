@@ -40,10 +40,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="d-flex align-items-center">
-                    <img src="./../assets/images/user.png" class="post_card_userimg">
+                    <div class="d-flex align-items-center justify-content-center rounded-circle" style="overflow: hidden; background-color: black; width:90px; height:90px">
+                        <img src="" class="post_card_userimg img-fluid" style="height:100%">
+                    </div>
                     <div class="ms-4 mt-2" id="postUname">
                         <h5 class="mb-0" id="post_username"></h5>
-                        <p id="postCreatedTime"></p>
+                        <p id="postCreatedTime" class="m-0"></p>
+                        <div class="d-flex" id="postloc"></div>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -75,14 +78,14 @@
                         <div>
                         <form class="d-flex mt-3" id="cmmntSec">
                             <input class="form-control me-2" placeholder="Comment..." id="inputComment">
-                            <button type="button" class="btn btn-primary" id="commentBtn">Comment</button>
+                            <button type="button" class="btn btn-primary" id="commentBtn" data-postID="">Comment</button>
                         </form>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" id="delete_btn"><i class="fa fa-trash" style="color: white; font-size: 20px; margin-right: 12px" aria-hidden="true"></i>Delete Post</button>
+                <button type="button" class="btn btn-danger" id="delete_btn" data-postID=""><i class="fa fa-trash" style="color: white; font-size: 20px; margin-right: 12px" aria-hidden="true"></i>Delete Post</button>
             </div>
         </div>
     </div>
@@ -131,7 +134,6 @@
 
     //block user from routing to other pages
     document.addEventListener("DOMContentLoaded", function(event) {
-        console.log("DOM fully loaded and parsed");
         if(localStorage.getItem("token") == null){   
             window.location.href = '<?php echo base_url() ?>Login';
         }
@@ -211,12 +213,11 @@
     });
 
     // INSERT A COMMENT TO A POST
-    function insertComment(postID, e) {
         $(document).on('click', '#commentBtn', function(e) {
             e.preventDefault();
             e.stopPropagation();
             var comment = $('#inputComment').val();
-            // var post_id = $('.postid_img').attr('data-postid');
+            var postID = $(this).attr('data-postID');
             console.log("comment to insert -- ",comment);
             console.log("comments post id -- ",postID);
             
@@ -233,14 +234,15 @@
                     console.log(data);
                     alert("Comment added successfully");
                     // CLOSE THE POPUP
-                    $('#editProfileModal').modal('hide');
+                    $('#postModal').modal('hide');
+                    // clear values of the modal
+
                     window.location.reload();
                 }else{
                     alert("Comment adding failed");
                 }
             });
         });
-    }
     
     // OPEN POSTS POPUP |-> LOAD POST AND COMMENTS
     $(document).on('click', '.postid_img', function openPostPopup() {
@@ -249,20 +251,27 @@
         var img_time = $(this).attr('data-cTime');
         var post_id = $(this).attr('id');
         var hashtags = $(this).attr('data-hashtags');
-        insertComment(post_id);
-        deletePost(post_id);
-
-        console.log( "HASH==>   --  ", hashtags);
-        console.log( "140  --  ",post_id);
-        console.log( "141  --  ",$(this).attr('src'));
-        console.log( "142  --  ",$(this).attr('data-caption'));
-
-        $('#comSec').text("");
+        var location = $(this).attr('data-location');
+        
+        console.log("Location -->>>>>>>> ",location);
+        
+        $('#comSec').empty();
+        $('#postloc').empty();
         $('#hashtags').text(hashtags);
         $('#post_img').attr('src', img_src);
+        $('#delete_btn').attr('data-postID', post_id);
+        $('#commentBtn').attr('data-postID', post_id);
         $('#post_cap').text(img_cap);
         $('#postCreatedTime').text(img_time);
         $('#post_username').text(user_name);
+
+        if(location == 'null'){
+            $('#postloc').css('display','none');
+        }else{
+            $('#postloc').append(
+                `<i class="fa fa-map-marker mt-1 me-2" aria-hidden="true"></i><p id="post_location" class="m-0" style="font-style: italic">${location}</p>`
+                );
+        }
         
         $.ajax({
             url: '<?php echo base_url() ?>api/Comment/' + post_id,
@@ -272,13 +281,16 @@
             }
         }).done(function(response) {
             if(response.status == true){
-                console.log("yes comments -- ",response['data']);
+                console.log("yes comments -- 1",response['data']);
                 for(var i=0; i<response['data'].length; i++){
-                    console.log("yes comments -- ",response['data'][i].comment);
+                    var commentID = response['data'][i].commentID;
+                    var profilePic = response['data'][i].profileImage !== null ? response['data'][i].profileImage : 'default.jpg';
+                    console.log("yes comments -- 2",response['data'][i].comment);
                     $('#comSec').append(`
-                        
                     <div class="d-flex align-items-start my-3">
-                        <img src="./../assets/images/user.png" class="post_card_comment_userimg">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle" style="overflow: hidden; background-color: black; width:70px; height:60px">
+                            <img src="http://localhost/codeigniter-cw/uploads/profiles/${profilePic}" class="post_card_comment_userimg img-fluid" style="height:100%" id="main_prof_pic">
+                        </div>
                         <div class="ms-3 w-100" >
                             <div class="d-flex justify-content-between align-items-center">
                                 <h6>`+response['data'][i].userName+`</h6>
@@ -286,6 +298,7 @@
                             </div>
                             <p>`+response['data'][i].comment+`</p>
                         </div>
+                        <i class="fa fa-trash mx-3" aria-hidden="true" id="deleteComment" data-deleteID="${commentID}"></i>
                     </div>
                         `);
                 }
@@ -296,22 +309,47 @@
                 `);
             }
         }).fail(function(response) {
-            console.log("no  -- ",response);
-           
+            console.log("no  -- ",response); 
         })
-
         $('#postModal').modal('show');
     });
 
+    // DELETE A COMMENT (Only availble for the user who created the comment & in my profile view)
+        $(document).on(' click', '#deleteComment', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var commentID = $(this).attr('data-deleteID');
+            console.log("comment id to delete -- ",commentID);
+
+            if (confirm("Are you sure you want ?")) {
+                $.ajax({
+                    url: '<?php echo base_url() ?>api/Comment/' + commentID,
+                    type: 'DELETE'
+                }).done(function(data) {
+                    if(data.status = true){
+                        console.log(data);
+                        alert("Comment deleted successfully");
+                        $('#postModal').modal('hide');
+                        window.location.reload();
+                    }else{
+                        alert("Comment delete failed");
+                    }
+                });
+            } else {
+                console.log("no");
+            }            
+        });
+
     // DELETE A USER POST (Only availble for the user who created the post & in my profile view)
-    function deletePost(postID, e) {            
         $(document).on('click', '#delete_btn', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
-            console.log("post id to delete -- ",postID);
 
-            if (confirm("Are you sure you want ?")) {
+            var postID = $('#delete_btn').attr('data-postID');
+
+            console.log("post id to delete -- ",postID);
+            
+            if (confirm("Are you sure you want to DELETE the post?")) {
                 $.ajax({
                     url: '<?php echo base_url() ?>api/Post/' + postID,
                     type: 'DELETE'
@@ -320,11 +358,8 @@
                         console.log(data);
                         alert("Post deleted successfully");
                         // CLOSE THE POPUP
-                        $('#editProfileModal').modal('hide');
+                        $('#postModal').modal('hide');
                         window.location.reload();
-                        // $('#postModal').modal('hide');
-                        
-                        // window.location.href = '<?php echo base_url() ?>Profile';
                     }else{
                         alert("Post delete failed");
                     }
@@ -332,9 +367,8 @@
             } else {
                 console.log("no");
             }
-            
         });
-    }
+    // }
 
     // GET USERS POSTS AND DISPLAY IN CARDS. {PROFILE PAGE - model & collection to get posts}
     var ProfilePostModel = Backbone.Model.extend({
@@ -380,8 +414,6 @@
                     </div>
                     `
                 );
-                $("#main_prof_pic").attr('src', "http://localhost/codeigniter-cw/uploads/profiles/default.jpg"); 
-                // + profileImage);
             }else{
                 var posts = allUserPosts['models'][0]['attributes']['data'];
                 console.log("Post: ", posts);
@@ -397,21 +429,26 @@
                     var postID = post['postID'];
                     var userID = post['userID'];
                     var hashtags = post['hashtags'];
+                    var location = post['location'];
+
+                    console.log("LOCATION: ", location);
 
                     var hashtagsString = hashtags.join(" ");
                     console.log("HASHTAGS STRING: ", hashtagsString);
 
                     var postCard = `
-                    <div class="col">
-                    <div class="card shadow-lg">
-                    <img src="http://localhost/codeigniter-cw/uploads/${postImg}" class="card-img-top postid_img" height=350 
-                        id="${postID}" data-caption="${postCaption}" data-cTime="${postCreatedTime}" data-postid="${postID}" data-hashtags="${hashtagsString}">
-                    </div>
-                    </div>
+                        <div class="col">
+                            <div class="card shadow-lg">
+                                <img src="http://localhost/codeigniter-cw/uploads/${postImg}" class="card-img postid_img" height=350 
+                                    id="${postID}" data-caption="${postCaption}" data-cTime="${postCreatedTime}" data-postid="${postID}" 
+                                    data-hashtags="${hashtagsString}" data-location="${location}">
+                            </div>
+                        </div>
                     `;
                     $('#post_imgs').append(postCard);
-                    
                 }
+                
+                $(".post_card_userimg").attr('src', "http://localhost/codeigniter-cw/uploads/profiles/" + profileImage);
                 $("#main_prof_pic").attr('src', "http://localhost/codeigniter-cw/uploads/profiles/" + profileImage);
                 $('#stats_posts').append("<p class='text-center fs-3 fw-bold landing_heading_1' >"+posts.length+" <br />Posts</p>");
                 $("#uname_desc").append(`
@@ -422,8 +459,7 @@
                         <button class="btn btn-outline-danger ms-2" id="logout"><i class="fa fa-sign-out"></i></button>
                     </div>
                     `
-                );
-                
+                );   
             }
         }
     });
@@ -445,5 +481,6 @@
     var logoutView = new LogoutView();
 
 </script>
+<div style="height:50px"></div>
 
 <?php $this->load->view('templates/footer'); ?>
