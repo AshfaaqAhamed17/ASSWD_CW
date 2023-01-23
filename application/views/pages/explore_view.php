@@ -121,7 +121,7 @@
             console.log("like data -- ",data.res);
             if(data.res == 1){
                 alert("Post liked successfully!");
-                // window.location.reload();
+                window.location.reload();
             }else if(data.res == 0){
                 alert("Post unlike!");
             }
