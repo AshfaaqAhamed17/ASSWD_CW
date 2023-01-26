@@ -16,14 +16,19 @@ class LikeModel extends CI_Model
                     'likeID' => $this->db->insert_id()
                 );
                 $this->db->insert('like_user_post', $data_new);
-                return 1;
+                $sql = "SELECT count(postID) as NumberOfLikes, postID FROM like_user_post WHERE postID = ". $postID;
+                $query = $this->db->query($sql);
+                return $query->result_array() + array('liked' => 1);
+                
             } else {
                 $data = array('liked' => FALSE);
                 // var_dump("LIKE - " . $data['liked']);
                 $this->db->where('likeID', $res->row()->likeID);
                 $this->db->delete('like_user_post');
                 $this->db->insert('liked', $data);
-                return 0;
+                $sql = "SELECT count(postID) as NumberOfLikes, postID FROM like_user_post WHERE postID = ". $postID;
+                $query = $this->db->query($sql);
+                return $query->result_array() + array('liked' => 0);
             }
             return $this->db->affected_rows();
         } else {

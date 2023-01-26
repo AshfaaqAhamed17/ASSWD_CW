@@ -115,8 +115,12 @@ class PostModel extends CI_Model
 
         $sql4 = "SELECT count(postID) as NumberOfLikes, postID FROM like_user_post GROUP BY postID";
         $query4 = $this->db->query($sql4);
-        // return $query4->result_array();
 
+        // check if the user has liked a post
+        // $sql5 = "SELECT postID FROM like_user_post WHERE userID = ". 12;
+        // $query5 = $this->db->query($sql5);
+
+        // var_dump($query5->result_array());
 
         foreach ($query1->result() as $row) {
             $postID = $row->postID;

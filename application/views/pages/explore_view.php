@@ -19,12 +19,12 @@
                 </div>
             </div>
 
-        <div class="col-3" id="explore_usercover_div" >
-            <div class="w-100 explore_usercover_img d-flex align-items-center justify-content-center">
-                <div class="d-flex align-items-center justify-content-center rounded-circle" style="overflow: hidden; background-color: black; width:150px; height:150px">
-                    <img src="" class="img-fluid" style="height:100%"  id="profPic">
+            <div class="col-3" id="explore_usercover_div" >
+                <div class="w-100 explore_usercover_img d-flex align-items-center justify-content-center">
+                    <div class="d-flex align-items-center justify-content-center rounded-circle" style="overflow: hidden; background-color: black; width:150px; height:150px">
+                        <img src="" class="img-fluid" style="height:100%"  id="profPic">
+                    </div>
                 </div>
-            </div>
             <div class="text-center" id="uDetail"></div>
         </div>
     </div>
@@ -52,8 +52,8 @@
                     <div class="col-4  text-center">
                         <img src="" class="img-fluid" id="post_img" style="height: 500px">
                         <div class="d-flex mt-2 justify-content-between">
-                            <a id="likeBtn" class="me-3 text-dark my-auto" style="text-decoration: none; cursor: pointer" data-postID="">
-                                <i class="fa fa-heart fs-2" style="color:red" aria-hidden="true"></i>
+                            <a id="likeBtn" class="me-3 text-dark my-auto" style="text-decoration: none; cursor: pointer" data-likedata="" data-postID="">
+                                <i class="fa fa-heart-o fs-2"  aria-hidden="true" id="likechanger"></i>
                             </a>
                             <a href="#" class="me-3 text-dark">
                                 <i class="fa fa-comment-o fs-2" aria-hidden="true"></i>
@@ -101,11 +101,13 @@
     var user_name = localStorage.getItem("username");
     var userDescription = localStorage.getItem("userDescription") ? localStorage.getItem("userDescription") : "My bio...";
     var profileImage = localStorage.getItem("profileImage") != 'null' ? localStorage.getItem("profileImage") : "default.jpg";
-    console.log("local -- ",user_id, user_name);
-
+    
     // LIKE THE POST
     $(document).on('click', '#likeBtn', function() {
+        $('#post_likes').empty();
+
         var post_id = $(this).attr('data-postID');
+        var likesCount = $(this).attr('data-likedata');
 
         var formData = new FormData();
         formData.append('postID', post_id);
@@ -119,14 +121,31 @@
             contentType: false,
         }).done(function(data) {
             console.log("like data -- ",data.res);
-            if(data.res == 1){
-                alert("Post liked successfully!");
-                window.location.reload();
-            }else if(data.res == 0){
-                alert("Post unliked!");
-                window.location.reload();
+            if(data.res.liked == 1){
+                newlikesCount = parseInt(data.res[0].NumberOfLikes);
+                $("#likechanger").attr("class", "fa fa-heart fs-2 text-danger");
+                if (newlikesCount == 0) {
+                    newlikesCount = 'No likes yet';
+                }else if(newlikesCount == 1){
+                    newlikesCount = newlikesCount + ' like';
+                }else{
+                    newlikesCount = newlikesCount + ' likes';
+                }
+            }else if(data.res.liked == 0){
+                console.log("-- ++ --",data.res[0].NumberOfLikes);
+                newlikesCount = parseInt(data.res[0].NumberOfLikes);
+                $("#likechanger").attr("class", "fa fa-heart-o fs-2");
+                if (newlikesCount == 0) {
+                    newlikesCount = 'No likes yet';
+                }else if(newlikesCount == 1){
+                    newlikesCount = newlikesCount + ' like';
+                }else{
+                    newlikesCount = newlikesCount + ' likes';
+                }
             }
-        }).fail(function(data) {
+
+            $('#post_likes').text(newlikesCount);
+           }).fail(function(data) {
             console.log("error -- ",data);
         });
     });
@@ -137,8 +156,6 @@
             e.stopPropagation();
             var comment = $('#inputComment').val();
             var postID = $(this).attr('data-postID');
-            console.log("comment to insert -- ",comment);
-            console.log("comments post id -- ",postID);
             
             $.ajax({
                 url: '<?php echo base_url() ?>api/Comment/insertComment',
@@ -150,7 +167,6 @@
                 },
             }).done(function(data) {
                 if(data.status = true){
-                    console.log(data);
                     alert("Comment added successfully");
                     // CLOSE THE POPUP
                     $('#postModal').modal('hide');
@@ -187,6 +203,7 @@
         $('#post_img').attr('src', img_src);
         $('#commentBtn').attr('data-postID', post_id);
         $('#likeBtn').attr('data-postID', post_id);
+        $('#likeBtn').attr('data-likedata', likesCount);
         $('#post_cap').text(img_cap);
         $('#postCreatedTime').text(img_time);
         $('#post_username').text(post_user_name);
@@ -209,10 +226,8 @@
             }
         }).done(function(response) {
             if(response.status == true){
-                console.log("yes comments -- ",response['data']);
                 for(var i=0; i<response['data'].length; i++){
                     var profilePic = response['data'][i].profileImage !== null ? response['data'][i].profileImage : 'default.jpg';
-                    console.log("yes comments -- ",response['data'][i].comment);
                     $('#comSec').append(`
                         <div class="d-flex align-items-start my-3">
                         <div class="d-flex align-items-center justify-content-center rounded-circle" style="overflow: hidden; background-color: black; width:70px; height:70px">
@@ -229,13 +244,11 @@
                     `);
                 }
             }else{
-                console.log("no comments -- ",response);
                 $('#comSec').append(`   
                     <p class="text-center my-5">`+ response['message'] +`</p>
                 `);
             }
         }).fail(function(response) {
-            console.log("no  -- ",response);
         })
         $('#postModal').modal('show');
     });
@@ -246,13 +259,11 @@
         e.stopPropagation();
         var tag = $('#searchby_tags').val();
 
-        console.log("tag -- ",tag);
         $.ajax({
             url: '<?php echo base_url() ?>api/Hashtags/' + tag,
             type: 'GET'
         }).done(function(response) {
             if(response.status == true){
-                console.log("yes posts by tags -- ",response['data']);
                 $('#post_imgs').text("");
                 
                 for(var i=0; i<response['data'].length; i++){
@@ -262,12 +273,7 @@
                     var profileImage = posts['profileImage'];
                     var likesCount = posts['NumberOfLikes'] !== undefined ? posts['NumberOfLikes'] : 0;
 
-                    console.log("Profile IMG: ", profileImage);
-
                     var hashtagsString = hashtags.join(" ");
-                    console.log("HASHTAGS STRING: ", hashtagsString);
-                    
-                    console.log("yes posts -- ",response['data'][i].image);
                     $('#post_imgs').append(`
                     <div class="col">
                         <div class="card rounded shadow-lg ">
@@ -280,7 +286,6 @@
                         `);
                 }
             }else{
-                console.log("no posts -- ",response);
                 $('#post_imgs').append(`   
                     <p class="text-center my-5">`+ response['message'] +`</p>
                 `);
@@ -329,8 +334,6 @@
 
             }else{
                 var posts = allUserPosts['models'][0]['attributes']['data'];
-                console.log("Post: ", posts);
-                console.log("105 -- Posts: ", posts.length);
 
                 for (var i = 0; i < posts.length; i++) {
                     var post = posts[i];
@@ -347,7 +350,6 @@
                     var likesCount = post['NumberOfLikes'] !== undefined ? post['NumberOfLikes'] : '0';
 
                     var hashtagsString = hashtags.join(" ");
-                    console.log("HASHTAGS STRING: ", hashtagsString);
 
                     var postCard = `
                     <div class="col">

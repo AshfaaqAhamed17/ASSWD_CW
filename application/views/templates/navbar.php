@@ -45,6 +45,19 @@
 </div>
 
 <!-- modal -->
+<div class="toast" id="element" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 100; right: 0;">
+  <div class="toast-header">
+    <img src="http://localhost/codeigniter-cw/uploads/profiles/default.jpg" class="rounded mr-2" style="height: 35px" alt="...">
+    <strong class="mr-auto">Yasitha Gamage</strong>
+    <small>&nbsp; 11 mins ago</small>
+    <button type="button" class="ms-4 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    Please do share this message.
+  </div>
+</div>
 
 
 <script>
@@ -58,7 +71,7 @@
     $(document).on('click', '#notification', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        $('#createPostModal').modal('show');
+        $('#element').toast('show');
     });
 
 
