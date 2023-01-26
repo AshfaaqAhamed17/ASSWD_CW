@@ -93,11 +93,7 @@ $db['default'] = array(
 	// 'hostname' => 'localhost',
 	// 'port' => 2222,
 
-	// 'hostname' => 'phpmyadmin.ecs.westminster.ac.uk',
-	// 'port' => 3306,
-	// 'username' => 'w1761334',
-	// 'password' => 'QeXp4uVPhKkl',
-	// 'database' => 'w1761334_0',
+
 
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
